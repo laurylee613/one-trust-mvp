@@ -84,27 +84,18 @@ export default function OneTrustDashboard() {
         },
         body: JSON.stringify({
           inputs: {
-            // 👇 终极奥义：哪怕只有一个文件，Dify 也要求必须套上一层中括号 [] ！
-            "document_input": [
-              {
-                "type": "document",
-                "transfer_method": "local_file",
-                "upload_file_id": uploadData.id
-              }
-            ]
-          },
-          // 双重保险：在根目录再挂载一次 files 数组，彻底堵死 Dify 的所有校验漏洞
-          files: [
-            {
-              type: "document",
-              transfer_method: "local_file",
-              upload_file_id: uploadData.id
+            // 👇 卸下数组装甲，恢复最纯粹的单文件对象形态！
+            "document_input": {
+              "type": "document",
+              "transfer_method": "local_file",
+              "upload_file_id": uploadData.id
             }
-          ],
+          },
           response_mode: "blocking",
           user: "one-trust-admin"
         })
-
+      });
+      
       if (!runRes.ok) throw new Error('Workflow execution failed.');
       const runData = await runRes.json();
 
