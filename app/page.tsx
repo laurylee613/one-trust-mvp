@@ -83,16 +83,17 @@ export default function OneTrustDashboard() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          inputs: {}, // 如果您的工作流需要特定的文本输入参数，请在这里加上
-          files: [{
-            type: "document",
-            transfer_method: "local_file",
-            upload_file_id: uploadData.id
-          }],
+          // 👇 看这里！document_input 必须包在 inputs 的花括号里面！
+          inputs: {
+            "document_input": {
+              "type": "document",
+              "transfer_method": "local_file",
+              "upload_file_id": uploadData.id
+            }
+          },
           response_mode: "blocking",
           user: "one-trust-admin"
         })
-      });
 
       if (!runRes.ok) throw new Error('Workflow execution failed.');
       const runData = await runRes.json();
