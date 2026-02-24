@@ -7,9 +7,7 @@ import { UploadCloud, Shield, FileText, Terminal, Crosshair, Lock, AlertTriangle
 // 🚨 指挥官，请在这里填入您的真实弹药库钥匙！
 // ==========================================
 const DIFY_API_KEY = "app-851IUQwtpGa2DlUn2GsnJN7a"; // 替换为您的 Dify 工作流 API Key
-// 覆盖原有的 URL，一字不差地替换为这行：
-const DIFY_API_URL = "https://corsproxy.io/?https://api.dify.ai/v1";
-// const DIFY_API_URL = "https://api.dify.ai/v1";   本地代理路径/api/dify
+const DIFY_API_URL = "https://api.dify.ai/v1";   // 本地代理路径/api/dify
 
 const MOCK_THINKING = `[SYSTEM INIT] Intercepting SOW payload...
 [UPLINK] Establishing secure connection to Dify Forge...
