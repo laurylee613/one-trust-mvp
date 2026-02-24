@@ -64,7 +64,7 @@ export default function OneTrustDashboard() {
       formData.append('file', file);
       formData.append('user', 'one-trust-admin');
 
-      const uploadRes = await fetch(`${DIFY_API_URL}/files`, {
+      const uploadRes = await fetch(`${DIFY_API_URL}/files/upload`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${DIFY_API_KEY}` },
         body: formData
