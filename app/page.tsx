@@ -98,8 +98,9 @@ export default function OneTrustDashboard() {
       const runData = await runRes.json();
 
       // 步骤 3: 提取 Turing Python 节点打好钢印的 text
-      const rawChunks = runData.data.outputs.text || [];
-      const parsedRules = rawChunks.map((chunkStr: string) => JSON.parse(chunkStr));
+      const textOutput = runData.data.outputs.text || "[]";
+      // 军工级安全解析：如果是字符串就 parse，如果已经是数组就直接用
+      const parsedRules = typeof textOutput === 'string' ? JSON.parse(textOutput) : textOutput;
       
       setVerdictRules(parsedRules);
       setTerminalText(prev => prev + `\n[SUCCESS] ${parsedRules.length} AST Redlines Extracted and Sealed.`);
