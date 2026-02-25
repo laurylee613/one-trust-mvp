@@ -97,8 +97,8 @@ export default function OneTrustDashboard() {
       if (!runRes.ok) throw new Error('Workflow execution failed.');
       const runData = await runRes.json();
 
-      // 步骤 3: 提取 Turing Python 节点打好钢印的 chunks_data
-      const rawChunks = runData.data.outputs.chunks_data || [];
+      // 步骤 3: 提取 Turing Python 节点打好钢印的 text
+      const rawChunks = runData.data.outputs.text || [];
       const parsedRules = rawChunks.map((chunkStr: string) => JSON.parse(chunkStr));
       
       setVerdictRules(parsedRules);
