@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { UploadCloud, Shield, FileText, ChevronDown, ChevronUp, Lock, AlertTriangle, Loader2, Scale, Terminal } from 'lucide-react';
+
 // ==========================================
 // 🚨 指挥官，请在这里填入您的真实弹药库钥匙！
 // ==========================================
@@ -28,8 +29,7 @@ const MiniTigerTallyPassIcon = ({ className }: { className?: string }) => (
 // 🐅 核心图腾：微缩版断裂虎符 (阻断状态)
 const MiniTigerTallyBlockIcon = ({ className }: { className?: string }) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
-      {/* 模拟从中间裂开的痕迹 */}
-      <path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75 0 2.2.73 4.23 1.95 5.85L11 12l-2-3 3-4 1.5 2.5z" />
+      <path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75 0 2.2.73 4.23 1.95 5.85L11 12l-2-3 3-4 1.5-2.5z" />
       <path d="M12 21.75c5.385 0 9.75-4.365 9.75-9.75 0-2.2-.73-4.23-1.95-5.85L13 12l2 3-3 4-1.5-2.5z" opacity="0.6"/>
     </svg>
 );
@@ -54,7 +54,6 @@ const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: nu
 
   if (isComplete) {
     if (hasThreats) {
-        // 🟥 阻断状态 (BLOCK)：兵符震动断裂，朱砂红警告
         return (
             <div className="h-full flex flex-col items-center justify-center overflow-hidden relative">
                 <div className="absolute inset-0 bg-rose-950/20 animate-pulse z-0"></div>
@@ -75,7 +74,6 @@ const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: nu
             </div>
         );
     } else {
-        // 🟨 成功状态 (PASS)：青铜金严丝合缝
         return (
             <div className="h-full flex flex-col items-center justify-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-amber-600/10 animate-pulse z-0" style={{ animationDuration: '4s' }}></div>
@@ -83,14 +81,12 @@ const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: nu
                 <div className="relative z-10 flex flex-col items-center">
                     <div className="relative w-48 h-48 mb-8 flex justify-center items-center">
                         <div className="absolute inset-0 bg-amber-600/20 blur-2xl rounded-full animate-pulse"></div>
-
                         <div className="w-24 h-full bg-gradient-to-r from-yellow-700 via-amber-600 to-yellow-800 rounded-l-full border-r border-amber-300/50 animate-in slide-in-from-left-full duration-1000 fill-mode-forwards z-10 shadow-[inset_0_0_20px_rgba(217,119,6,0.4)]">
                            <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMTAgMTBMNDAgNDBIMTBWMTBaIiBmaWxsPSIjRkZEMzAwIiBmaWxsLW9wYWNpdHk9IjAuMiIvPjwvc3ZnPg==')]"></div>
                         </div>
                         <div className="w-24 h-full bg-gradient-to-l from-yellow-700 via-amber-600 to-yellow-800 rounded-r-full border-l border-amber-300/50 animate-in slide-in-from-right-full duration-1000 fill-mode-forwards z-10 shadow-[inset_0_0_20px_rgba(217,119,6,0.4)] -ml-[1px]">
                            <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMzAgMzBMMCAwSDMwVjMwWiIgZmlsbD0iI0ZGRDMwMCIgZmlsbC1vcGFjaXR5PSIwLjIiLz48L3N2Zz4=')]"></div>
                         </div>
-                        
                         <Shield className="absolute w-16 h-16 text-amber-200 animate-in zoom-in duration-500 delay-1000 fill-mode-forwards z-20 drop-shadow-[0_0_15px_rgba(253,230,138,0.8)]" />
                     </div>
                     <h2 className="text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 tracking-[0.2em] mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">合符成功 · 准予出征</h2>
@@ -114,7 +110,7 @@ export default function OneTrustDashboard() {
   const [terminalText, setTerminalText] = useState('');
   const [verdictRules, setVerdictRules] = useState<any[]>([]);
   const [selectedFileName, setSelectedFileName] = useState('');
-  const [expandedRules, setExpandedRules] = useState<Set<number>>(new Set()); // 记录哪些卡片展开了底层详情
+  const [expandedRules, setExpandedRules] = useState<Set<number>>(new Set()); 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -172,9 +168,7 @@ export default function OneTrustDashboard() {
 
       const runRes = await fetch(`${DIFY_API_URL}/workflows/run`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           inputs: {
             "document_input": {
@@ -212,7 +206,7 @@ export default function OneTrustDashboard() {
           <Scale className="w-8 h-8 text-amber-500" />
           <h1 className="text-2xl font-serif font-bold tracking-widest text-slate-100">
             ONE <span className="text-amber-500">TRIBUNAL</span> 
-            <span className="text-xs text-slate-500 font-mono tracking-normal ml-3 border border-slate-700 px-2 py-0.5 rounded-sm">虎符行动 v2.0</span>
+            <span className="text-xs text-slate-500 font-mono tracking-normal ml-3 border border-slate-700 px-2 py-0.5 rounded-sm">虎符行动 v2.1</span>
           </h1>
         </div>
         <div className="text-xs font-mono text-amber-600/60 flex items-center gap-2">
@@ -250,16 +244,33 @@ export default function OneTrustDashboard() {
         </div>
 
         {/* 第二屏：法典锻造炉 */}
-        <div className="bg-[#03070C] border border-amber-900/20 rounded-xl p-6 flex flex-col relative shadow-[0_0_40px_rgba(217,119,6,0.03)]">
+        <div className="bg-[#03070C] border border-amber-900/20 rounded-xl p-6 flex flex-col relative shadow-[0_0_40px_rgba(217,119,6,0.03)] overflow-hidden">
           <h2 className="text-lg font-serif font-bold text-slate-200 mb-4 flex items-center gap-2">
             <Terminal className="w-5 h-5 text-amber-600"/> 法典锻造炉 (The Legislative Forge)
           </h2>
-          <div className="flex-1 bg-black/80 border border-slate-800/80 rounded-lg p-4 font-mono text-sm overflow-y-auto">
-            {status === 'idle' && <span className="text-slate-700">Awaiting Contract Submission...</span>}
-            <pre className={`whitespace-pre-wrap leading-relaxed ${status === 'error' ? 'text-rose-500' : 'text-amber-500/70'}`}>
-              {terminalText}
-              {(status === 'thinking' || status === 'uploading') && <span className="animate-pulse">_</span>}
-            </pre>
+          <div className="flex-1 bg-black/80 border border-slate-800/80 rounded-lg font-mono text-sm flex flex-col relative overflow-hidden">
+            
+            {/* ✅ 任务三：仲裁人话版摘要 (The Executive Summary) */}
+            {(status !== 'idle') && (
+              <div className="bg-gradient-to-r from-slate-900/95 to-black border-b border-amber-900/40 p-3 px-4 flex items-center gap-3 sticky top-0 z-10 shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                <Scale className="w-4 h-4 text-amber-500" />
+                <span className="font-serif font-bold text-amber-400 text-[13px] tracking-widest">
+                  {status === 'complete' 
+                    ? `[ 仲裁纪要 ] 成功提取 ${verdictRules.length} 条法定红线规则，已生成物理拦截网并固化至司法链。`
+                    : status === 'error'
+                    ? '[ 仲裁纪要 ] 仲裁程序异常中断，请检查天眼网络。'
+                    : '[ 仲裁纪要 ] 正在同步提取法定红线，请稍候...'}
+                </span>
+              </div>
+            )}
+            
+            <div className="p-4 flex-1 overflow-y-auto custom-scrollbar">
+              {status === 'idle' && <span className="text-slate-700">Awaiting Contract Submission...</span>}
+              <pre className={`whitespace-pre-wrap leading-relaxed ${status === 'error' ? 'text-rose-500' : 'text-amber-500/70'}`}>
+                {terminalText}
+                {(status === 'thinking' || status === 'uploading') && <span className="animate-pulse">_</span>}
+              </pre>
+            </div>
           </div>
         </div>
 
@@ -279,16 +290,14 @@ export default function OneTrustDashboard() {
                 return (
                   <div key={idx} className="bg-[#0A0F18] border border-rose-900/40 rounded-lg relative overflow-hidden transition-all duration-500 animate-in slide-in-from-right-4 fade-in" style={{ animationDelay: `${idx * 150}ms`, animationFillMode: 'both' }}>
                     
-                    {/* 左侧装饰线 */}
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-700"></div>
 
-                    {/* 角标：致命违规 */}
-                    <div className="absolute top-0 right-0 bg-gradient-to-l from-rose-800 to-red-700 text-white text-[10px] font-bold px-3 py-1 flex items-center gap-1 shadow-[0_2px_10px_rgba(225,29,72,0.3)] rounded-bl-lg">
-                      <AlertTriangle className="w-3 h-3" /> CRITICAL 致命驳回
+                    {/* ✅ 任务一：词汇法理化 (裁定违规) */}
+                    <div className="absolute top-0 right-0 bg-gradient-to-l from-rose-900 to-red-800 text-slate-100 text-[10px] font-bold px-3 py-1.5 flex items-center gap-1.5 shadow-[0_2px_10px_rgba(225,29,72,0.4)] rounded-bl-lg border-b border-l border-rose-500/30">
+                      <Scale className="w-3 h-3 text-rose-300" /> 裁定违规 (Ruling: Violation)
                     </div>
                     
-                    <div className="p-4">
-                      {/* 规则编号与核心自然语言结论 (面向 CEO) */}
+                    <div className="p-4 pt-5">
                       <div className="flex items-start gap-3 mb-3 pr-24">
                         <div className="mt-1">
                           <MiniTigerTallyBlockIcon className="w-5 h-5 text-rose-600 drop-shadow-[0_0_5px_rgba(225,29,72,0.5)]" />
@@ -299,7 +308,6 @@ export default function OneTrustDashboard() {
                         </div>
                       </div>
 
-                      {/* 展开/折叠技术详情的按钮 */}
                       <button 
                         onClick={() => toggleRule(idx)}
                         className="flex items-center gap-1 text-[11px] text-amber-600/70 hover:text-amber-500 font-mono transition-colors ml-8 mb-2"
@@ -308,7 +316,6 @@ export default function OneTrustDashboard() {
                         {isExpanded ? '收起底层熔断指令' : '查阅底层熔断指令 (AST/Regex)'}
                       </button>
 
-                      {/* 隐藏的 AST 机器逻辑面板 */}
                       {isExpanded && (
                         <div className="ml-8 bg-black/60 border border-slate-800 rounded p-3 mb-3 animate-in slide-in-from-top-2 fade-in duration-200">
                           <div className="text-[10px] text-slate-500 font-mono mb-2 border-b border-slate-800 pb-1">// COMPILED AST MACHINE LOGIC</div>
@@ -321,7 +328,6 @@ export default function OneTrustDashboard() {
                         </div>
                       )}
                       
-                      {/* 古代封泥样式的哈希存证区 */}
                       <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between ml-8">
                         <div className="flex flex-col">
                            <span className="text-[10px] text-amber-600/60 font-serif mb-1">【司法链哈希存证】</span>
@@ -330,10 +336,12 @@ export default function OneTrustDashboard() {
                            </div>
                         </div>
                         
-                        {/* 封泥印章视觉 */}
-                        <div className="border-2 border-rose-900/60 bg-rose-950/20 px-2 py-1 rounded flex items-center gap-1 transform -rotate-2">
-                           <Lock className="w-3 h-3 text-rose-600" />
-                           <span className="text-[10px] text-rose-600 font-serif font-bold tracking-widest">司法链已固化</span>
+                        {/* ✅ 任务二：图腾具象化 (红光闪烁的断裂虎符与封泥) */}
+                        <div className="border-2 border-rose-900/60 bg-rose-950/40 px-2.5 py-1.5 rounded flex items-center gap-1.5 transform -rotate-2 relative overflow-hidden group shadow-[0_0_10px_rgba(225,29,72,0.1)]">
+                           <div className="absolute inset-0 bg-rose-500/10 animate-pulse duration-1000"></div>
+                           {/* 动态断裂虎符图标闪烁红光 */}
+                           <MiniTigerTallyBlockIcon className="w-4 h-4 text-rose-500 drop-shadow-[0_0_8px_rgba(225,29,72,0.8)] animate-pulse" />
+                           <span className="text-[10px] text-rose-500 font-serif font-bold tracking-widest relative z-10">司法链已固化</span>
                         </div>
                       </div>
                     </div>
