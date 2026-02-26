@@ -1,22 +1,41 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { UploadCloud, Shield, FileText, Terminal, Crosshair, Lock, AlertTriangle, Loader2 } from 'lucide-react';
-
-
+import { UploadCloud, Shield, FileText, ChevronDown, ChevronUp, Lock, AlertTriangle, Loader2, Scale } from 'lucide-react';
 
 // ==========================================
-// 🐅 虎符行动：新增核心视觉组件定义
+// 🚨 指挥官，请在这里填入您的真实弹药库钥匙！
 // ==========================================
+const DIFY_API_URL = "https://api.oneplatform.com.cn/v1"; 
 
-// 任务三：微缩版“金色小虎符”图标 (替换 Lock 图标)
-const MiniTigerTallyIcon = ({ className }: { className?: string }) => (
+const MOCK_THINKING = `[仲裁庭纪要] 契约已呈递...
+[天眼网络] 建立司法级加密通道...
+[虎符引擎] 启动条款研判与法理核查...
+<thinking>
+拆解法言法语，锚定合规实体...
+规避免责条款陷阱，锁定绝对义务...
+</thinking>
+[锻造炉] 熔铸 AST 物理熔断逻辑...
+[存证库] 提取青铜金哈希，固化司法链条...
+`;
+
+// 🐅 核心图腾：微缩版完整虎符 (通过状态)
+const MiniTigerTallyPassIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
     <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM9.763 9.41c.123-.162.253-.32.389-.474a7.56 7.56 0 01-.215-2.467c.419.16.846.303 1.276.433a5.837 5.837 0 01.774 1.96c.491.41.994.806 1.51 1.187a6.627 6.627 0 00.593-3.492c.47.248.944.48 1.423.7a4.947 4.947 0 01-1.31 1.994 11.4 11.4 0 012.58 1.132c-.348.445-.68.904-1 1.376-.427-.069-.857-.13-1.287-.184a6.263 6.263 0 00-.935-2.274 5.03 5.03 0 01-1.645 1.231c-.306.566-.63 1.121-.97 1.666.546.17 1.096.327 1.648.47a4.89 4.89 0 01-1.375 2.086 10.25 10.25 0 012.656.874c-.408.492-.797.998-1.17 1.517-.47-.15-.938-.31-1.404-.477a6.766 6.766 0 00-1.078-2.532 4.788 4.788 0 01-1.52 1.232c-.368.478-.753.942-1.154 1.391.482.333.981.644 1.492.935-.447.438-.877.89-1.288 1.354a11.88 11.88 0 012.32 1.101c-.242.256-.482.516-.718.78a8.2 8.2 0 00-2.148-1.034 6.15 6.15 0 01-1.382 1.617c-.044.05-.087.1-.13.151a9.75 9.75 0 01-1.865-1.023 6.188 6.188 0 001.36-1.613c-.16-.094-.32-.191-.479-.29a8.08 8.08 0 01-2.131-1.012 5.98 5.98 0 001.343-1.594c-.349-.318-.694-.647-1.032-.985.077-.107.153-.215.23-.322z" clipRule="evenodd" />
   </svg>
-)
+);
 
-// 任务二：核心视觉——虎符化状态组件 (The Tally Core)
+// 🐅 核心图腾：微缩版断裂虎符 (阻断状态)
+const MiniTigerTallyBlockIcon = ({ className }: { className?: string }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+      {/* 模拟从中间裂开的痕迹 */}
+      <path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75 0 2.2.73 4.23 1.95 5.85L11 12l-2-3 3-4 1.5 2.5z" />
+      <path d="M12 21.75c5.385 0 9.75-4.365 9.75-9.75 0-2.2-.73-4.23-1.95-5.85L13 12l2 3-3 4-1.5-2.5z" opacity="0.6"/>
+    </svg>
+);
+
+// 🐅 核心视觉——虎符动态状态组件
 const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: number }) => {
   const isThinking = status === 'thinking' || status === 'uploading';
   const isComplete = status === 'complete';
@@ -25,112 +44,80 @@ const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: nu
   if (isThinking) {
     return (
         <div className="h-full flex flex-col items-center justify-center animate-pulse">
-            {/* 青铜纹理的加载态 */}
-            <div className="w-24 h-24 rounded-full border-4 border-t-cyan-500 border-cyan-900/30 animate-spin mb-6 relative">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-cyan-900/20 via-transparent to-transparent bg-blend-overlay"></div>
+            <div className="w-24 h-24 rounded-full border-4 border-t-amber-500 border-amber-900/30 animate-spin mb-6 relative blur-[1px]">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-900/20 via-transparent to-transparent bg-blend-overlay"></div>
             </div>
-            <div className="text-cyan-500 font-mono text-lg tracking-widest">兵符铸造中...</div>
-            <div className="text-slate-500 text-xs mt-2 font-mono">FORGING TIGER TALLY AUTHORITY...</div>
+            <div className="text-amber-500 font-serif text-lg tracking-widest">提取铭文 · 虚影聚形...</div>
+            <div className="text-slate-500 text-xs mt-2 font-mono">MANIFESTING TALLY ESSENCE...</div>
         </div>
     );
   }
 
   if (isComplete) {
     if (hasThreats) {
-        // 🟥 阻断状态 (BLOCK)：兵符炸裂
+        // 🟥 阻断状态 (BLOCK)：兵符震动断裂，朱砂红警告
         return (
             <div className="h-full flex flex-col items-center justify-center overflow-hidden relative">
-                {/* 炸裂的红光脉冲 */}
-                <div className="absolute inset-0 bg-red-900/20 animate-pulse z-0"></div>
+                <div className="absolute inset-0 bg-rose-950/20 animate-pulse z-0"></div>
                 
                 <div className="relative z-10 flex flex-col items-center">
                     <div className="relative w-48 h-48 mb-8">
-                         {/* 左半符 - 向左炸裂并旋转 */}
-                        <div className="absolute left-0 w-1/2 h-full bg-gradient-to-br from-red-900 via-amber-900 to-red-950 rounded-l-full border-r-2 border-red-500/50 animate-in slide-in-from-right-10 fade-out duration-1000 fill-mode-forwards" style={{ transform: 'translateX(-20px) rotate(-15deg)', boxShadow: 'inset 0 0 20px rgba(220, 38, 38, 0.5)' }}>
-                           {/* 模拟青铜铭文纹理 */}
+                        <div className="absolute left-0 w-1/2 h-full bg-gradient-to-br from-rose-900 via-red-800 to-rose-950 rounded-l-full border-r-2 border-rose-500/50 animate-in slide-in-from-right-10 fade-out duration-1000 fill-mode-forwards" style={{ transform: 'translateX(-25px) rotate(-10deg)', boxShadow: 'inset 0 0 20px rgba(225, 29, 72, 0.4)' }}>
                            <div className="absolute inset-0 opacity-30 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMjAgMjBMMCAwSDQwTDIwIDIwWk0yMCAyMEw0MCA0MEgwTDIwIDIwWiIgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIwLjEiLz48L3N2Zz4=')]"></div>
                         </div>
-                        {/* 右半符 - 向右炸裂并旋转 */}
-                        <div className="absolute right-0 w-1/2 h-full bg-gradient-to-bl from-red-900 via-amber-900 to-red-950 rounded-r-full border-l-2 border-red-500/50 animate-in slide-in-from-left-10 fade-out duration-1000 fill-mode-forwards" style={{ transform: 'translateX(20px) rotate(15deg)', boxShadow: 'inset 0 0 20px rgba(220, 38, 38, 0.5)' }}>
+                        <div className="absolute right-0 w-1/2 h-full bg-gradient-to-bl from-rose-900 via-red-800 to-rose-950 rounded-r-full border-l-2 border-rose-500/50 animate-in slide-in-from-left-10 fade-out duration-1000 fill-mode-forwards" style={{ transform: 'translateX(25px) rotate(10deg)', boxShadow: 'inset 0 0 20px rgba(225, 29, 72, 0.4)' }}>
                            <div className="absolute inset-0 opacity-30 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMjAgMjBMMCAwSDQwTDIwIDIwWk0yMCAyMEw0MCA0MEgwTDIwIDIwWiIgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIwLjEiLz48L3N2Zz4=')]"></div>
                         </div>
-                         {/* 中间炸裂的闪电/裂痕 */}
-                        <AlertTriangle className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 text-red-500 animate-ping" />
+                        <AlertTriangle className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 text-rose-500 animate-ping" />
                     </div>
-                    <h2 className="text-3xl font-bold text-red-500 tracking-[0.2em] mb-2 drop-shadow-[0_0_10px_rgba(220,38,38,0.8)]">兵符不合 · 禁止出征</h2>
-                    <p className="text-red-800/70 font-mono text-sm tracking-widest">AUTHORIZATION DENIED</p>
+                    <h2 className="text-3xl font-serif font-bold text-rose-500 tracking-[0.2em] mb-2 drop-shadow-[0_0_10px_rgba(225,29,72,0.6)]">兵符不合 · 驳回部署</h2>
+                    <p className="text-rose-800/70 font-mono text-sm tracking-widest">DEPLOYMENT VETOED</p>
                 </div>
             </div>
         );
     } else {
-        // 🟩 成功状态 (PASS)：合符成功
+        // 🟨 成功状态 (PASS)：青铜金严丝合缝
         return (
             <div className="h-full flex flex-col items-center justify-center relative overflow-hidden">
-                {/* 金光特效 */}
-                <div className="absolute inset-0 bg-amber-500/10 animate-pulse z-0" style={{ animationDuration: '3s' }}></div>
+                <div className="absolute inset-0 bg-amber-600/10 animate-pulse z-0" style={{ animationDuration: '4s' }}></div>
 
                 <div className="relative z-10 flex flex-col items-center">
                     <div className="relative w-48 h-48 mb-8 flex justify-center items-center">
-                        {/* 金光底座 */}
-                        <div className="absolute inset-0 bg-amber-500/30 blur-2xl rounded-full animate-pulse"></div>
+                        <div className="absolute inset-0 bg-amber-600/20 blur-2xl rounded-full animate-pulse"></div>
 
-                        {/* 左半符 - 从左侧滑入拼合 */}
-                        <div className="w-24 h-full bg-gradient-to-r from-amber-700 via-yellow-600 to-amber-800 rounded-l-full border-r border-amber-400/50 animate-in slide-in-from-left-full duration-1000 fill-mode-forwards z-10 shadow-[inset_0_0_20px_rgba(251,191,36,0.3)]">
-                           {/* 模拟青铜篆体铭文纹理 */}
+                        <div className="w-24 h-full bg-gradient-to-r from-yellow-700 via-amber-600 to-yellow-800 rounded-l-full border-r border-amber-300/50 animate-in slide-in-from-left-full duration-1000 fill-mode-forwards z-10 shadow-[inset_0_0_20px_rgba(217,119,6,0.4)]">
                            <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMTAgMTBMNDAgNDBIMTBWMTBaIiBmaWxsPSIjRkZEMzAwIiBmaWxsLW9wYWNpdHk9IjAuMiIvPjwvc3ZnPg==')]"></div>
                         </div>
-                        {/* 右半符 - 从右侧滑入拼合 */}
-                        <div className="w-24 h-full bg-gradient-to-l from-amber-700 via-yellow-600 to-amber-800 rounded-r-full border-l border-amber-400/50 animate-in slide-in-from-right-full duration-1000 fill-mode-forwards z-10 shadow-[inset_0_0_20px_rgba(251,191,36,0.3)] -ml-[1px]">
+                        <div className="w-24 h-full bg-gradient-to-l from-yellow-700 via-amber-600 to-yellow-800 rounded-r-full border-l border-amber-300/50 animate-in slide-in-from-right-full duration-1000 fill-mode-forwards z-10 shadow-[inset_0_0_20px_rgba(217,119,6,0.4)] -ml-[1px]">
                            <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMzAgMzBMMCAwSDMwVjMwWiIgZmlsbD0iI0ZGRDMwMCIgZmlsbC1vcGFjaXR5PSIwLjIiLz48L3N2Zz4=')]"></div>
                         </div>
                         
-                        {/* 合符瞬间的闪光点 */}
-                        <Shield className="absolute w-16 h-16 text-amber-300 animate-in zoom-in duration-500 delay-1000 fill-mode-forwards z-20 drop-shadow-[0_0_15px_rgba(251,191,36,1)]" />
+                        <Shield className="absolute w-16 h-16 text-amber-200 animate-in zoom-in duration-500 delay-1000 fill-mode-forwards z-20 drop-shadow-[0_0_15px_rgba(253,230,138,0.8)]" />
                     </div>
-                    <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 tracking-[0.2em] mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">合符成功 · 准予出征</h2>
-                    <p className="text-amber-500/70 font-mono text-sm tracking-widest">AUTHORIZED FOR DEPLOYMENT</p>
+                    <h2 className="text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 tracking-[0.2em] mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">合符成功 · 准予出征</h2>
+                    <p className="text-amber-600/70 font-mono text-sm tracking-widest">AUTHORIZED BY TRIBUNAL</p>
                 </div>
             </div>
         );
     }
   }
 
-  // 默认等待状态
   return (
-    <div className="h-full flex items-center justify-center text-slate-600 font-mono text-sm border-2 border-dashed border-slate-800 rounded-lg relative overflow-hidden group">
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-cyan-900/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-      AWAITING SOW PAYLOAD...
+    <div className="h-full flex items-center justify-center text-slate-600 font-serif text-sm border-2 border-dashed border-slate-800 rounded-lg relative overflow-hidden group">
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-slate-800/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      呈递契约以候仲裁...
     </div>
   );
 };
 
-
-
-// ==========================================
-// 🚨 指挥官，请在这里填入您的真实弹药库钥匙！
-// ==========================================
-const DIFY_API_URL = "https://api.oneplatform.com.cn/v1";   // 堡垒机代理路径
-
-
-const MOCK_THINKING = `[SYSTEM INIT] Intercepting SOW payload...
-[UPLINK] Establishing secure connection to Dify Forge...
-[DARROW ENGINE] Parsing legal context...
-<thinking>
-Executing Tree-sitter AST extraction protocols...
-Applying <context_exclude> shields against comment manipulation...
-</thinking>
-[FORGE] Compiling AST Machine Logic...
-[VAULT] Waiting for Turing Coder to apply SHA-256 seals...
-`;
-
 export default function OneTrustDashboard() {
-  const [status, setStatus] = useState('idle'); // idle, uploading, thinking, complete, error
+  const [status, setStatus] = useState('idle'); 
   const [terminalText, setTerminalText] = useState('');
   const [verdictRules, setVerdictRules] = useState<any[]>([]);
   const [selectedFileName, setSelectedFileName] = useState('');
+  const [expandedRules, setExpandedRules] = useState<Set<number>>(new Set()); // 记录哪些卡片展开了底层详情
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 模拟打字机动画 (与真实网络请求并行，保持极客压迫感)
   useEffect(() => {
     if (status === 'thinking' || status === 'uploading') {
       let i = 0;
@@ -145,14 +132,21 @@ export default function OneTrustDashboard() {
     }
   }, [status]);
 
-  // 物理触发器：点击区域打开文件选择
   const handleDropzoneClick = () => {
     if (status === 'idle' || status === 'error' || status === 'complete') {
       fileInputRef.current?.click();
     }
   };
 
-  // 真实 Dify API 斩首逻辑
+  const toggleRule = (idx: number) => {
+    setExpandedRules(prev => {
+      const next = new Set(prev);
+      if (next.has(idx)) next.delete(idx);
+      else next.add(idx);
+      return next;
+    });
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -160,9 +154,9 @@ export default function OneTrustDashboard() {
     setSelectedFileName(file.name);
     setStatus('uploading');
     setVerdictRules([]);
+    setExpandedRules(new Set());
 
     try {
-      // 步骤 1: 将文件物理上传至 Dify
       const formData = new FormData();
       formData.append('file', file);
       formData.append('user', 'one-trust-admin');
@@ -172,12 +166,11 @@ export default function OneTrustDashboard() {
         body: formData
       });
       
-      if (!uploadRes.ok) throw new Error('File upload failed. 检查API密钥或CORS。');
+      if (!uploadRes.ok) throw new Error('File upload failed.');
       const uploadData = await uploadRes.json();
 
       setStatus('thinking');
 
-      // 步骤 2: 唤醒 Darrow 引擎进行 AST 降维打击
       const runRes = await fetch(`${DIFY_API_URL}/workflows/run`, {
         method: 'POST',
         headers: {
@@ -185,7 +178,6 @@ export default function OneTrustDashboard() {
         },
         body: JSON.stringify({
           inputs: {
-            // 👇 卸下数组装甲，恢复最纯粹的单文件对象形态！
             "document_input": {
               "type": "document",
               "transfer_method": "local_file",
@@ -200,112 +192,157 @@ export default function OneTrustDashboard() {
       if (!runRes.ok) throw new Error('Workflow execution failed.');
       const runData = await runRes.json();
 
-      // 步骤 3: 提取 Turing Python 节点打好钢印的 text
       const textOutput = runData.data.outputs.text || "[]";
-      // 军工级安全解析：如果是字符串就 parse，如果已经是数组就直接用
       const parsedRules = typeof textOutput === 'string' ? JSON.parse(textOutput) : textOutput;
       
       setVerdictRules(parsedRules);
-      setTerminalText(prev => prev + `\n[SUCCESS] ${parsedRules.length} AST Redlines Extracted and Sealed.`);
+      setTerminalText(prev => prev + `\n[仲裁完毕] 锁定 ${parsedRules.length} 处违规命门。`);
       setStatus('complete');
 
     } catch (error: any) {
       console.error(error);
-      setTerminalText(prev => prev + `\n[FATAL ERROR] ${error.message}`);
+      setTerminalText(prev => prev + `\n[系统异常] ${error.message}`);
       setStatus('error');
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-300 font-sans p-6">
-      <header className="flex items-center justify-between border-b border-cyan-900/50 pb-4 mb-6">
+    <div className="min-h-screen bg-[#050B14] text-slate-300 font-sans p-6 selection:bg-amber-500/30">
+      <header className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
         <div className="flex items-center gap-3">
-          <Shield className="w-8 h-8 text-cyan-400" />
-          <h1 className="text-2xl font-bold tracking-widest text-white">ONE <span className="text-cyan-400">TRUST</span> <span className="text-xs text-slate-500 font-mono tracking-normal ml-2">v1.0-PRODUCTION</span></h1>
+          <Scale className="w-8 h-8 text-amber-500" />
+          <h1 className="text-2xl font-serif font-bold tracking-widest text-slate-100">
+            ONE <span className="text-amber-500">TRIBUNAL</span> 
+            <span className="text-xs text-slate-500 font-mono tracking-normal ml-3 border border-slate-700 px-2 py-0.5 rounded-sm">虎符行动 v2.0</span>
+          </h1>
         </div>
-        <div className="text-xs font-mono text-cyan-500/50 flex items-center gap-2">
-          {status === 'thinking' && <Loader2 className="w-3 h-3 animate-spin text-cyan-400"/>}
+        <div className="text-xs font-mono text-amber-600/60 flex items-center gap-2">
+          {status === 'thinking' && <Loader2 className="w-3 h-3 animate-spin text-amber-500"/>}
           STATUS: {status.toUpperCase()}
         </div>
       </header>
 
       <div className="grid grid-cols-3 gap-6 h-[85vh] min-w-[1200px] overflow-x-auto">
         
-        {/* 第一屏：法典投料口 */}
-        <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 flex flex-col relative overflow-hidden shadow-lg">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50"></div>
-          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><UploadCloud className="w-5 h-5 text-cyan-400"/> 法典投料口 (The Forge)</h2>
-          <p className="text-sm text-slate-400 mb-6">上传政务协议/外包合同 SOW，One Platform 将自动提取 AST 物理阻断红线。</p>
+        {/* 第一屏：契约收纳处 */}
+        <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 flex flex-col relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-600/50 to-transparent"></div>
+          <h2 className="text-lg font-serif font-bold text-slate-200 mb-4 flex items-center gap-2">
+            <UploadCloud className="w-5 h-5 text-amber-600"/> 契约收纳处 (Contract Intake)
+          </h2>
+          <p className="text-sm text-slate-500 mb-6 font-serif">呈递商业协议或 SOW 文本，平台将依法理准则执行自动化合规仲裁。</p>
           
           <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".pdf,.doc,.docx,.txt" />
           
           <div 
             onClick={handleDropzoneClick}
             className={`flex-1 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-300
-              ${(status === 'idle' || status === 'complete' || status === 'error') ? 'border-cyan-700/50 hover:border-cyan-400 hover:bg-cyan-950/20' : 'border-slate-800 bg-slate-900/50 opacity-50 cursor-not-allowed'}`}
+              ${(status === 'idle' || status === 'complete' || status === 'error') ? 'border-amber-900/40 hover:border-amber-600 hover:bg-amber-950/20' : 'border-slate-800 bg-slate-900/50 opacity-50 cursor-not-allowed'}`}
           >
-            <FileText className={`w-12 h-12 mb-4 ${(status === 'idle' || status === 'complete') ? 'text-cyan-500' : 'text-slate-600'}`} />
-            <span className="text-sm font-mono text-center px-4">
-              {status === 'idle' && '[ DROP SOW PDF/WORD HERE ]\nClick to select file'}
-              {status === 'uploading' && `UPLOADING: ${selectedFileName}...`}
-              {status === 'thinking' && `EXTRACTING: ${selectedFileName}...`}
-              {status === 'complete' && `[ ${selectedFileName} PROCESSED ]\nClick to upload another`}
-              {status === 'error' && '[ UPLOAD FAILED ]\nClick to retry'}
+            <FileText className={`w-12 h-12 mb-4 ${(status === 'idle' || status === 'complete') ? 'text-amber-700' : 'text-slate-700'}`} />
+            <span className="text-sm font-serif text-center px-4 tracking-wider">
+              {status === 'idle' && '点击或拖拽呈递卷宗\n[ 支持 PDF / Word ]'}
+              {status === 'uploading' && `卷宗上传中: ${selectedFileName}...`}
+              {status === 'thinking' && `法理研判中: ${selectedFileName}...`}
+              {status === 'complete' && `[ ${selectedFileName} 仲裁完毕 ]\n点击呈递新卷宗`}
+              {status === 'error' && '[ 呈递失败 ]\n点击重试'}
             </span>
           </div>
         </div>
 
-        {/* 第二屏：真理提炼视窗 */}
-        <div className="bg-[#0a0a0a] border border-cyan-900/30 rounded-xl p-6 flex flex-col relative shadow-[0_0_30px_rgba(6,182,212,0.05)]">
-          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Terminal className="w-5 h-5 text-cyan-400"/> 真理提炼视窗 (The Crucible)</h2>
-          <div className="flex-1 bg-black border border-slate-800 rounded-lg p-4 font-mono text-sm overflow-y-auto">
-            {status === 'idle' && <span className="text-slate-600">Awaiting SOW payload...</span>}
-            <pre className={`whitespace-pre-wrap leading-relaxed ${status === 'error' ? 'text-red-400' : 'text-cyan-400/80'}`}>
+        {/* 第二屏：法典锻造炉 */}
+        <div className="bg-[#03070C] border border-amber-900/20 rounded-xl p-6 flex flex-col relative shadow-[0_0_40px_rgba(217,119,6,0.03)]">
+          <h2 className="text-lg font-serif font-bold text-slate-200 mb-4 flex items-center gap-2">
+            <Terminal className="w-5 h-5 text-amber-600"/> 法典锻造炉 (The Legislative Forge)
+          </h2>
+          <div className="flex-1 bg-black/80 border border-slate-800/80 rounded-lg p-4 font-mono text-sm overflow-y-auto">
+            {status === 'idle' && <span className="text-slate-700">Awaiting Contract Submission...</span>}
+            <pre className={`whitespace-pre-wrap leading-relaxed ${status === 'error' ? 'text-rose-500' : 'text-amber-500/70'}`}>
               {terminalText}
               {(status === 'thinking' || status === 'uploading') && <span className="animate-pulse">_</span>}
             </pre>
           </div>
         </div>
 
-        {/* 第三屏：断头台验尸报告 */}
-        <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 flex flex-col shadow-lg">
-          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Crosshair className="w-5 h-5 text-red-500"/> 断头台判决书 (The Verdict)</h2>
+        {/* 第三屏：虎符仲裁庭 */}
+        <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 flex flex-col shadow-2xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-900/5 via-transparent to-rose-900/5 pointer-events-none"></div>
           
-          <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+          <h2 className="text-lg font-serif font-bold text-slate-200 mb-4 flex items-center gap-2 relative z-10">
+            <Scale className={`w-5 h-5 ${status === 'complete' && verdictRules.length > 0 ? 'text-rose-600' : 'text-amber-600'}`}/> 
+            {status === 'complete' && verdictRules.length > 0 ? '虎符仲裁庭 (The Tribunal)' : '兵符验合区 (Tally Verification)'}
+          </h2>
+          
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar relative z-10">
             {status === 'complete' && verdictRules.length > 0 ? (
-              verdictRules.map((rule, idx) => (
-                <div key={idx} className="bg-slate-950 border border-red-900/30 rounded-lg p-4 relative overflow-hidden hover:border-red-500/50 transition-colors animate-in slide-in-from-right-4 fade-in duration-500" style={{ animationDelay: `${idx * 150}ms`, animationFillMode: 'both' }}>
-                  <div className="absolute top-0 right-0 bg-red-500 text-black text-[10px] font-bold px-2 py-1 flex items-center gap-1">
-                    <AlertTriangle className="w-3 h-3" /> {rule.threat_level}
-                  </div>
-                  
-                  <div className="text-cyan-400 font-mono text-xs mb-2">[{rule.rule_id}]</div>
-                  <div className="text-white font-bold text-sm mb-3">{rule.content}</div>
-                  
-                  <div className="bg-black/50 border border-slate-800 rounded p-3 mb-4">
-                    <div className="text-[10px] text-slate-500 font-mono mb-1">// AST Machine Logic</div>
-                    <div className="text-green-400 font-mono text-xs break-all">
-                      <span className="text-slate-400">target:</span> {rule.machine_logic.target}<br/>
-                      <span className="text-slate-400">operator:</span> {rule.machine_logic.operator}<br/>
-                      <span className="text-slate-400">regex:</span> {rule.machine_logic.value.join(' | ')}
+              verdictRules.map((rule, idx) => {
+                const isExpanded = expandedRules.has(idx);
+                return (
+                  <div key={idx} className="bg-[#0A0F18] border border-rose-900/40 rounded-lg relative overflow-hidden transition-all duration-500 animate-in slide-in-from-right-4 fade-in" style={{ animationDelay: `${idx * 150}ms`, animationFillMode: 'both' }}>
+                    
+                    {/* 左侧装饰线 */}
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-700"></div>
+
+                    {/* 角标：致命违规 */}
+                    <div className="absolute top-0 right-0 bg-gradient-to-l from-rose-800 to-red-700 text-white text-[10px] font-bold px-3 py-1 flex items-center gap-1 shadow-[0_2px_10px_rgba(225,29,72,0.3)] rounded-bl-lg">
+                      <AlertTriangle className="w-3 h-3" /> CRITICAL 致命驳回
+                    </div>
+                    
+                    <div className="p-4">
+                      {/* 规则编号与核心自然语言结论 (面向 CEO) */}
+                      <div className="flex items-start gap-3 mb-3 pr-24">
+                        <div className="mt-1">
+                          <MiniTigerTallyBlockIcon className="w-5 h-5 text-rose-600 drop-shadow-[0_0_5px_rgba(225,29,72,0.5)]" />
+                        </div>
+                        <div>
+                           <div className="text-slate-500 font-mono text-xs mb-1">法条代号: {rule.rule_id}</div>
+                           <div className="text-slate-200 font-serif font-bold text-[15px] leading-relaxed">{rule.content}</div>
+                        </div>
+                      </div>
+
+                      {/* 展开/折叠技术详情的按钮 */}
+                      <button 
+                        onClick={() => toggleRule(idx)}
+                        className="flex items-center gap-1 text-[11px] text-amber-600/70 hover:text-amber-500 font-mono transition-colors ml-8 mb-2"
+                      >
+                        {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                        {isExpanded ? '收起底层熔断指令' : '查阅底层熔断指令 (AST/Regex)'}
+                      </button>
+
+                      {/* 隐藏的 AST 机器逻辑面板 */}
+                      {isExpanded && (
+                        <div className="ml-8 bg-black/60 border border-slate-800 rounded p-3 mb-3 animate-in slide-in-from-top-2 fade-in duration-200">
+                          <div className="text-[10px] text-slate-500 font-mono mb-2 border-b border-slate-800 pb-1">// COMPILED AST MACHINE LOGIC</div>
+                          <div className="text-amber-500/80 font-mono text-xs break-all leading-relaxed">
+                            <span className="text-slate-500">Target   : </span> {rule.machine_logic?.target}<br/>
+                            <span className="text-slate-500">Operator : </span> {rule.machine_logic?.operator}<br/>
+                            <span className="text-slate-500">Value    : </span> 
+                            <span className="text-rose-400/80">{Array.isArray(rule.machine_logic?.value) ? rule.machine_logic.value.join(' | ') : rule.machine_logic?.value}</span>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* 古代封泥样式的哈希存证区 */}
+                      <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between ml-8">
+                        <div className="flex flex-col">
+                           <span className="text-[10px] text-amber-600/60 font-serif mb-1">【司法链哈希存证】</span>
+                           <div className="font-mono text-[10px] text-slate-500 w-48 truncate" title={rule.metadata?.sha256_fingerprint}>
+                             {rule.metadata?.sha256_fingerprint}
+                           </div>
+                        </div>
+                        
+                        {/* 封泥印章视觉 */}
+                        <div className="border-2 border-rose-900/60 bg-rose-950/20 px-2 py-1 rounded flex items-center gap-1 transform -rotate-2">
+                           <Lock className="w-3 h-3 text-rose-600" />
+                           <span className="text-[10px] text-rose-600 font-serif font-bold tracking-widest">司法链已固化</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center justify-between border-t border-slate-800 pt-3 mt-2">
-                    <div className="flex items-center gap-1.5 text-slate-400">
-                      <Lock className="w-3 h-3 text-emerald-500" />
-                      <span className="text-[10px]">司法级防伪钢印已生成</span>
-                    </div>
-                    <div className="text-[9px] font-mono text-slate-600 w-1/2 truncate text-right" title={rule.metadata.sha256_fingerprint}>
-                      {rule.metadata.sha256_fingerprint}
-                    </div>
-                  </div>
-                </div>
-              ))
+                );
+              })
             ) : (
-               <div className="h-full flex items-center justify-center text-slate-600 font-mono text-sm border-2 border-dashed border-slate-800 rounded-lg">
-                 {status === 'thinking' ? 'FORGING AST REDLINES...' : 'AWAITING EXECUTION'}
-               </div>
+              <TigerTallyStatus status={status} ruleCount={verdictRules.length} />
             )}
           </div>
         </div>
