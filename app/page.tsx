@@ -51,23 +51,25 @@ const TallyHalfRight = ({ className, style }: { className?: string, style?: Reac
 );
 
 
-// ✨ 核心视觉：钻石级动效存证印章组件
+// ✨ 核心视觉：钻石级动效存证印章组件 (已升级 HTML5 Audio 突破引擎)
 const AnimatedSeal = ({ hash, index }: { hash: string, index: number }) => {
   const [hasImpacted, setHasImpacted] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // 预加载音效，避免延迟
-    audioRef.current = new Audio('/kada.mp3');
-    audioRef.current.volume = 0.8;
-
-    // 级联延迟：根据第几条规则，延迟不同的时间，形成“咔哒、咔哒”的连击感
+    // 级联延迟：根据第几条规则延迟不同的时间
     const impactTimer = setTimeout(() => {
       setHasImpacted(true);
-      // 触发音效
-      if (audioRef.current) {
-        audioRef.current.play().catch(e => console.warn("音效可能因浏览器自动播放策略被拦截，请确保用户已发生交互(点击上传)。", e));
-      }
+      
+      // 突破浏览器自动播放限制：从全局 DOM 中抓取音频节点并克隆播放 (实现连击音效)
+      try {
+        const globalAudio = document.getElementById('tally-sound') as HTMLAudioElement;
+        if (globalAudio) {
+          const soundClone = globalAudio.cloneNode(true) as HTMLAudioElement;
+          soundClone.volume = 0.8;
+          soundClone.play().catch(e => console.warn("音效播放被浏览器静音策略拦截", e));
+        }
+      } catch (err) {}
+      
     }, index * 250 + 400); // 400ms 是等待卡片滑入的时间，250ms 是间隔
 
     return () => clearTimeout(impactTimer);
@@ -75,8 +77,6 @@ const AnimatedSeal = ({ hash, index }: { hash: string, index: number }) => {
 
   return (
     <div className="flex flex-col items-center ml-8 mt-4 pt-3 border-t border-slate-800/60 relative">
-      
-      {/* 🚀 注入专属的 CSS 关键帧，隔离于全局 */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes slideLeftHalf { 0% { transform: translateX(-15px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
         @keyframes slideRightHalf { 0% { transform: translateX(15px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
@@ -91,40 +91,14 @@ const AnimatedSeal = ({ hash, index }: { hash: string, index: number }) => {
            <div className="font-mono text-[10px] text-slate-500 w-48 truncate" title={hash}>{hash}</div>
         </div>
         
-        {/* 动画区域引擎 */}
         <div className="flex flex-col items-center justify-center relative w-32 h-16">
-          
-          {/* 上半部：合符碰撞区 */}
           <div className="absolute top-0 flex items-center justify-center">
-             {/* 撞击爆发的青铜金光晕 (Impact Glow) */}
-             <div className="absolute w-4 h-4 rounded-full" 
-                  style={{ animation: hasImpacted ? 'impactGlow 1s ease-out forwards' : 'none' }}>
-             </div>
-
-             {/* 左半符：滑入 */}
-             <TallyHalfLeft 
-                className="w-4 h-4 text-amber-600/80 z-10" 
-                style={{ 
-                  animation: hasImpacted ? 'slideLeftHalf 0.15s cubic-bezier(0.4, 0, 1, 1) forwards' : 'breatheRed 2s infinite',
-                  transform: hasImpacted ? 'translateX(0)' : 'translateX(-8px)'
-                }} 
-             />
-             {/* 右半符：滑入 */}
-             <TallyHalfRight 
-                className="w-4 h-4 text-amber-600/80 z-10 -ml-[1px]" 
-                style={{ 
-                  animation: hasImpacted ? 'slideRightHalf 0.15s cubic-bezier(0.4, 0, 1, 1) forwards' : 'breatheRed 2s infinite',
-                  transform: hasImpacted ? 'translateX(0)' : 'translateX(8px)'
-                }} 
-             />
+             <div className="absolute w-4 h-4 rounded-full" style={{ animation: hasImpacted ? 'impactGlow 1s ease-out forwards' : 'none' }}></div>
+             <TallyHalfLeft className="w-4 h-4 text-amber-600/80 z-10" style={{ animation: hasImpacted ? 'slideLeftHalf 0.15s cubic-bezier(0.4, 0, 1, 1) forwards' : 'breatheRed 2s infinite', transform: hasImpacted ? 'translateX(0)' : 'translateX(-8px)' }} />
+             <TallyHalfRight className="w-4 h-4 text-amber-600/80 z-10 -ml-[1px]" style={{ animation: hasImpacted ? 'slideRightHalf 0.15s cubic-bezier(0.4, 0, 1, 1) forwards' : 'breatheRed 2s infinite', transform: hasImpacted ? 'translateX(0)' : 'translateX(8px)' }} />
           </div>
-
-          {/* 下半部：[司法链已固化] 红色印章重击盖下 */}
           {hasImpacted && (
-            <div 
-              className="absolute bottom-1 border-2 border-rose-900/60 bg-rose-950/40 px-2 py-0.5 rounded shadow-[0_0_10px_rgba(225,29,72,0.2)]"
-              style={{ animation: 'stampDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards' }}
-            >
+            <div className="absolute bottom-1 border-2 border-rose-900/60 bg-rose-950/40 px-2 py-0.5 rounded shadow-[0_0_10px_rgba(225,29,72,0.2)]" style={{ animation: 'stampDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards' }}>
                <span className="text-[9px] text-rose-500 font-serif font-bold tracking-widest">司法链已固化</span>
             </div>
           )}
@@ -337,6 +311,10 @@ export default function OneTrustDashboard() {
 
   return (
     <div className="min-h-screen bg-[#050B14] text-slate-300 font-sans p-6 selection:bg-amber-500/30">
+    
+      {/* 🔊 物理植入的隐藏音频炮管 */}
+      <audio id="tally-sound" src="/kada.mp3" preload="auto" className="hidden"></audio>
+
       <header className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
         <div className="flex items-center gap-3">
           <Scale className="w-8 h-8 text-amber-500" />
@@ -347,7 +325,7 @@ export default function OneTrustDashboard() {
         </div>
         <div className="text-xs font-mono text-amber-600/60 flex items-center gap-2">
           {status === 'thinking' && <Loader2 className="w-3 h-3 animate-spin text-amber-500"/>}
-          STATUS: {status.toUpperCase()}
+          STATUS: {status.toUpperCase()}       
         </div>
       </header>
 
