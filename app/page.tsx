@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { UploadCloud, Shield, FileText, ChevronDown, ChevronUp, Lock, AlertTriangle, Loader2, Scale, Terminal } from 'lucide-react';
 
 // ==========================================
-// 🚨 指挥官，请在这里填入您的真实弹药库钥匙！
+// 🚨 Dify API 与环境配置
 // ==========================================
 const DIFY_API_URL = "https://api.oneplatform.com.cn/v1"; 
 
@@ -19,7 +19,7 @@ const MOCK_THINKING = `[仲裁庭纪要] 契约已呈递...
 [存证库] 提取青铜金哈希，固化司法链条...
 `;
 
-// 🎨 防截断常量区：用数组拼接规避所有换行解析异常
+// 🎨 防截断常量区
 const BG_PATTERN_RED = "url('data:image/svg+xml;base64," +
   "PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h" +
   "0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMjAgMjBMMCAwSDQwTDIwIDIwWk" +
@@ -36,38 +36,110 @@ const BG_PATTERN_GOLD_R = "url('data:image/svg+xml;base64," +
   "0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMzAgMzBMMCAwSDMwVjMwWiIgZm" +
   "lsbD0iI0ZGRDMwMCIgZmlsbC1vcGFjaXR5PSIwLjIiLz48L3N2Zz4=')";
 
-const TIGER_PASS_PATH = [
-  "M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM9.763 9.41c.123-.162",
-  ".253-.32.389-.474a7.56 7.56 0 01-.215-2.467c.419.16.846.303 1.276.433a5.837 5.837 0 01.774 1.96c.491.41.994.806 1.51",
-  "1.187a6.627 6.627 0 00.593-3.492c.47.248.944.48 1.423.7a4.947 4.947 0 01-1.31 1.994 11.4 11.4 0 012.58 1.132c-.348.445-.68.904-1",
-  "1.376-.427-.069-.857-.13-1.287-.184a6.263 6.263 0 00-.935-2.274 5.03 5.03 0 01-1.645 1.231c-.306.566-.63 1.121-.97 1.666.546.17",
-  "1.096.327 1.648.47a4.89 4.89 0 01-1.375 2.086 10.25 10.25 0 012.656.874c-.408.492-.797.998-1.17 1.517-.47-.15-.938-.31-1.404-.477",
-  "a6.766 6.766 0 00-1.078-2.532 4.788 4.788 0 01-1.52 1.232c-.368.478-.753.942-1.154 1.391.482.333.981.644 1.492.935-.447.438-.877.89",
-  "-1.288 1.354a11.88 11.88 0 012.32 1.101c-.242.256-.482.516-.718.78a8.2 8.2 0 00-2.148-1.034 6.15 6.15 0 01-1.382 1.617c-.044.05-.087.1",
-  "-.13.151a9.75 9.75 0 01-1.865-1.023 6.188 6.188 0 001.36-1.613c-.16-.094-.32-.191-.479-.29a8.08 8.08 0 01-2.131-1.012 5.98 5.98",
-  "0 001.343-1.594c-.349-.318-.694-.647-1.032-.985.077-.107.153-.215.23-.322z"
-].join("");
-
-// 🐅 核心图腾：微缩版完整虎符 
-const MiniTigerTallyPassIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path fillRule="evenodd" clipRule="evenodd" d={TIGER_PASS_PATH} />
+// 🐅 核心图腾：左半边虎符
+const TallyHalfLeft = ({ className, style }: { className?: string, style?: React.CSSProperties }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 24" fill="currentColor" className={className} style={style}>
+    <path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75 0 2.2.73 4.23 1.95 5.85L11 12l1-1.5V2.25z" />
   </svg>
 );
 
-// 🐅 核心图腾：微缩版断裂虎符 
-const MiniTigerTallyBlockIcon = ({ className }: { className?: string }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75 0 2.2.73 4.23 1.95 5.85L11 12l-2-3 3-4 1.5-2.5z" />
-      <path d="M12 21.75c5.385 0 9.75-4.365 9.75-9.75 0-2.2-.73-4.23-1.95-5.85L13 12l2 3-3 4-1.5-2.5z" opacity="0.6"/>
-    </svg>
+// 🐅 核心图腾：右半边虎符
+const TallyHalfRight = ({ className, style }: { className?: string, style?: React.CSSProperties }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="12 0 12 24" fill="currentColor" className={className} style={style}>
+    <path d="M12 21.75c5.385 0 9.75-4.365 9.75-9.75 0-2.2-.73-4.23-1.95-5.85L13 12l-1 1.5v8.25z" />
+  </svg>
 );
 
-// 🐅 核心视觉——虎符动态状态组件
+
+// ✨ 核心视觉：钻石级动效存证印章组件
+const AnimatedSeal = ({ hash, index }: { hash: string, index: number }) => {
+  const [hasImpacted, setHasImpacted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // 预加载音效，避免延迟
+    audioRef.current = new Audio('/kada.mp3');
+    audioRef.current.volume = 0.8;
+
+    // 级联延迟：根据第几条规则，延迟不同的时间，形成“咔哒、咔哒”的连击感
+    const impactTimer = setTimeout(() => {
+      setHasImpacted(true);
+      // 触发音效
+      if (audioRef.current) {
+        audioRef.current.play().catch(e => console.warn("音效可能因浏览器自动播放策略被拦截，请确保用户已发生交互(点击上传)。", e));
+      }
+    }, index * 250 + 400); // 400ms 是等待卡片滑入的时间，250ms 是间隔
+
+    return () => clearTimeout(impactTimer);
+  }, [index]);
+
+  return (
+    <div className="flex flex-col items-center ml-8 mt-4 pt-3 border-t border-slate-800/60 relative">
+      
+      {/* 🚀 注入专属的 CSS 关键帧，隔离于全局 */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes slideLeftHalf { 0% { transform: translateX(-15px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+        @keyframes slideRightHalf { 0% { transform: translateX(15px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+        @keyframes impactGlow { 0% { box-shadow: 0 0 0px 0px rgba(217,119,6,0); } 30% { box-shadow: 0 0 25px 10px rgba(217,119,6,0.9); } 100% { box-shadow: 0 0 5px 2px rgba(217,119,6,0.3); } }
+        @keyframes stampDown { 0% { transform: scale(1.8) rotate(-15deg); opacity: 0; } 50% { transform: scale(0.9) rotate(-2deg); opacity: 1; } 100% { transform: scale(1) rotate(-2deg); opacity: 1; } }
+        @keyframes breatheRed { 0%, 100% { filter: drop-shadow(0 0 2px rgba(225,29,72,0.5)); } 50% { filter: drop-shadow(0 0 8px rgba(225,29,72,0.9)); } }
+      `}} />
+
+      <div className="w-full flex items-center justify-between">
+        <div className="flex flex-col">
+           <span className="text-[10px] text-amber-600/60 font-serif mb-1">【司法链哈希存证】</span>
+           <div className="font-mono text-[10px] text-slate-500 w-48 truncate" title={hash}>{hash}</div>
+        </div>
+        
+        {/* 动画区域引擎 */}
+        <div className="flex flex-col items-center justify-center relative w-32 h-16">
+          
+          {/* 上半部：合符碰撞区 */}
+          <div className="absolute top-0 flex items-center justify-center">
+             {/* 撞击爆发的青铜金光晕 (Impact Glow) */}
+             <div className="absolute w-4 h-4 rounded-full" 
+                  style={{ animation: hasImpacted ? 'impactGlow 1s ease-out forwards' : 'none' }}>
+             </div>
+
+             {/* 左半符：滑入 */}
+             <TallyHalfLeft 
+                className="w-4 h-4 text-amber-600/80 z-10" 
+                style={{ 
+                  animation: hasImpacted ? 'slideLeftHalf 0.15s cubic-bezier(0.4, 0, 1, 1) forwards' : 'breatheRed 2s infinite',
+                  transform: hasImpacted ? 'translateX(0)' : 'translateX(-8px)'
+                }} 
+             />
+             {/* 右半符：滑入 */}
+             <TallyHalfRight 
+                className="w-4 h-4 text-amber-600/80 z-10 -ml-[1px]" 
+                style={{ 
+                  animation: hasImpacted ? 'slideRightHalf 0.15s cubic-bezier(0.4, 0, 1, 1) forwards' : 'breatheRed 2s infinite',
+                  transform: hasImpacted ? 'translateX(0)' : 'translateX(8px)'
+                }} 
+             />
+          </div>
+
+          {/* 下半部：[司法链已固化] 红色印章重击盖下 */}
+          {hasImpacted && (
+            <div 
+              className="absolute bottom-1 border-2 border-rose-900/60 bg-rose-950/40 px-2 py-0.5 rounded shadow-[0_0_10px_rgba(225,29,72,0.2)]"
+              style={{ animation: 'stampDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards' }}
+            >
+               <span className="text-[9px] text-rose-500 font-serif font-bold tracking-widest">司法链已固化</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ... (以下部分保持 V2.1 的完美原样，只需替换虎符大屏的 rule 映射部分)
 const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: number }) => {
+  // 保持原有大屏动画不变
   const isThinking = status === 'thinking' || status === 'uploading';
   const isComplete = status === 'complete';
-  const isError = status === 'error'; // ✅ 熔断标识
+  const isError = status === 'error'; 
   const hasThreats = ruleCount > 0;
 
   if (isThinking) {
@@ -82,7 +154,6 @@ const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: nu
     );
   }
 
-  // ✅ Fail-Closed 强制熔断视觉
   if (isError) {
     return (
         <div className="h-full flex flex-col items-center justify-center relative overflow-hidden">
@@ -247,7 +318,6 @@ export default function OneTrustDashboard() {
 
       const textOutput = runData.data.outputs.text;
       
-      // ✅ 军工级熔断机制
       if (!textOutput || textOutput === "ERROR_LLM_EMPTY" || textOutput === "ERROR_LLM_MALFORMED") {
          throw new Error("契约法理特征提取失败。深海引擎未返回有效卷宗，为防止漏判，已触发强制物理熔断！");
       }
@@ -283,7 +353,7 @@ export default function OneTrustDashboard() {
 
       <div className="grid grid-cols-3 gap-6 h-[85vh] min-w-[1200px] overflow-x-auto">
         
-        {/* 第一屏 */}
+        {/* 第一屏：收纳处 */}
         <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 flex flex-col relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-600/50 to-transparent"></div>
           <h2 className="text-lg font-serif font-bold text-slate-200 mb-4 flex items-center gap-2">
@@ -309,7 +379,7 @@ export default function OneTrustDashboard() {
           </div>
         </div>
 
-        {/* 第二屏 */}
+        {/* 第二屏：锻造炉 */}
         <div className="bg-[#03070C] border border-amber-900/20 rounded-xl p-6 flex flex-col relative shadow-[0_0_40px_rgba(217,119,6,0.03)] overflow-hidden">
           <h2 className="text-lg font-serif font-bold text-slate-200 mb-4 flex items-center gap-2">
             <Terminal className="w-5 h-5 text-amber-600"/> 法典锻造炉 (The Legislative Forge)
@@ -339,7 +409,7 @@ export default function OneTrustDashboard() {
           </div>
         </div>
 
-        {/* 第三屏 */}
+        {/* 第三屏：仲裁庭 */}
         <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 flex flex-col shadow-2xl relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-amber-900/5 via-transparent to-rose-900/5 pointer-events-none"></div>
           
@@ -361,10 +431,10 @@ export default function OneTrustDashboard() {
                       <Scale className="w-3 h-3 text-rose-300" /> 裁定违规 (Ruling: Violation)
                     </div>
                     
-                    <div className="p-4 pt-5">
+                    <div className="p-4 pt-5 pb-2">
                       <div className="flex items-start gap-3 mb-3 pr-24">
                         <div className="mt-1">
-                          <MiniTigerTallyBlockIcon className="w-5 h-5 text-rose-600 drop-shadow-[0_0_5px_rgba(225,29,72,0.5)]" />
+                          <AlertTriangle className="w-5 h-5 text-rose-600 drop-shadow-[0_0_5px_rgba(225,29,72,0.5)]" />
                         </div>
                         <div>
                            <div className="text-slate-500 font-mono text-xs mb-1">法条代号: {rule.rule_id}</div>
@@ -392,20 +462,8 @@ export default function OneTrustDashboard() {
                         </div>
                       )}
                       
-                      <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between ml-8">
-                        <div className="flex flex-col">
-                           <span className="text-[10px] text-amber-600/60 font-serif mb-1">【司法链哈希存证】</span>
-                           <div className="font-mono text-[10px] text-slate-500 w-48 truncate" title={rule.metadata?.sha256_fingerprint}>
-                             {rule.metadata?.sha256_fingerprint}
-                           </div>
-                        </div>
-                        
-                        <div className="border-2 border-rose-900/60 bg-rose-950/40 px-2.5 py-1.5 rounded flex items-center gap-1.5 transform -rotate-2 relative overflow-hidden group shadow-[0_0_10px_rgba(225,29,72,0.1)]">
-                           <div className="absolute inset-0 bg-rose-500/10 animate-pulse duration-1000"></div>
-                           <MiniTigerTallyBlockIcon className="w-4 h-4 text-rose-500 drop-shadow-[0_0_8px_rgba(225,29,72,0.8)] animate-pulse" />
-                           <span className="text-[10px] text-rose-500 font-serif font-bold tracking-widest relative z-10">司法链已固化</span>
-                        </div>
-                      </div>
+                      {/* 💎 钻石级植入：动态合符与盖章区域 */}
+                      <AnimatedSeal hash={rule.metadata?.sha256_fingerprint || "0xNULL"} index={idx} />
                     </div>
                   </div>
                 );
