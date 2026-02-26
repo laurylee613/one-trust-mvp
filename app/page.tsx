@@ -52,6 +52,20 @@ const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: nu
     );
   }
 
+  // ✅ 核心新增：系统异常的熔断视觉 (Fail-Closed)
+  if (isError) {
+    return (
+        <div className="h-full flex flex-col items-center justify-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-slate-900/50 animate-pulse z-0" style={{ animationDuration: '2s' }}></div>
+            <div className="relative z-10 flex flex-col items-center">
+                <AlertTriangle className="w-16 h-16 text-slate-600 mb-6 drop-shadow-[0_0_10px_rgba(71,85,105,0.5)]" />
+                <h2 className="text-2xl font-serif font-bold text-slate-400 tracking-[0.2em] mb-2">契约提取失败 · 强制熔断</h2>
+                <p className="text-slate-500 font-mono text-sm tracking-widest">FAIL-CLOSED PROTOCOL ENGAGED</p>
+            </div>
+        </div>
+    );
+  }
+
   if (isComplete) {
     if (hasThreats) {
         return (
@@ -185,7 +199,13 @@ export default function OneTrustDashboard() {
       if (!runRes.ok) throw new Error('Workflow execution failed.');
       const runData = await runRes.json();
 
-      const textOutput = runData.data.outputs.text || "[]";
+      const textOutput = runData.data.outputs.text;
+      
+      // 🛡️ 军工级熔断机制：拒绝静默放行 (Fail-Closed)
+      if (!textOutput || textOutput === "ERROR_LLM_EMPTY" || textOutput === "ERROR_LLM_MALFORMED") {
+         throw new Error("契约法理特征提取失败。深海引擎未返回有效卷宗，为防止漏判，已触发强制物理熔断！");
+      }
+
       const parsedRules = typeof textOutput === 'string' ? JSON.parse(textOutput) : textOutput;
       
       setVerdictRules(parsedRules);
