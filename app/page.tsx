@@ -19,14 +19,43 @@ const MOCK_THINKING = `[仲裁庭纪要] 契约已呈递...
 [存证库] 提取青铜金哈希，固化司法链条...
 `;
 
-// 🐅 核心图腾：微缩版完整虎符 (通过状态)
+// 🎨 防截断常量区：用数组拼接规避所有换行解析异常
+const BG_PATTERN_RED = "url('data:image/svg+xml;base64," +
+  "PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h" +
+  "0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMjAgMjBMMCAwSDQwTDIwIDIwWk" +
+  "0yMCAyMEw0MCA0MEgwTDIwIDIwWiIgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIwLjEiL" +
+  "z48L3N2Zz4=')";
+
+const BG_PATTERN_GOLD_L = "url('data:image/svg+xml;base64," +
+  "PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h" +
+  "0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMTAgMTBMNDAgNDBIMTBWMTBaIi" +
+  "BmaWxsPSIjRkZEMzAwIiBmaWxsLW9wYWNpdHk9IjAuMiIvPjwvc3ZnPg==')";
+
+const BG_PATTERN_GOLD_R = "url('data:image/svg+xml;base64," +
+  "PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h" +
+  "0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMzAgMzBMMCAwSDMwVjMwWiIgZm" +
+  "lsbD0iI0ZGRDMwMCIgZmlsbC1vcGFjaXR5PSIwLjIiLz48L3N2Zz4=')";
+
+const TIGER_PASS_PATH = [
+  "M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM9.763 9.41c.123-.162",
+  ".253-.32.389-.474a7.56 7.56 0 01-.215-2.467c.419.16.846.303 1.276.433a5.837 5.837 0 01.774 1.96c.491.41.994.806 1.51",
+  "1.187a6.627 6.627 0 00.593-3.492c.47.248.944.48 1.423.7a4.947 4.947 0 01-1.31 1.994 11.4 11.4 0 012.58 1.132c-.348.445-.68.904-1",
+  "1.376-.427-.069-.857-.13-1.287-.184a6.263 6.263 0 00-.935-2.274 5.03 5.03 0 01-1.645 1.231c-.306.566-.63 1.121-.97 1.666.546.17",
+  "1.096.327 1.648.47a4.89 4.89 0 01-1.375 2.086 10.25 10.25 0 012.656.874c-.408.492-.797.998-1.17 1.517-.47-.15-.938-.31-1.404-.477",
+  "a6.766 6.766 0 00-1.078-2.532 4.788 4.788 0 01-1.52 1.232c-.368.478-.753.942-1.154 1.391.482.333.981.644 1.492.935-.447.438-.877.89",
+  "-1.288 1.354a11.88 11.88 0 012.32 1.101c-.242.256-.482.516-.718.78a8.2 8.2 0 00-2.148-1.034 6.15 6.15 0 01-1.382 1.617c-.044.05-.087.1",
+  "-.13.151a9.75 9.75 0 01-1.865-1.023 6.188 6.188 0 001.36-1.613c-.16-.094-.32-.191-.479-.29a8.08 8.08 0 01-2.131-1.012 5.98 5.98",
+  "0 001.343-1.594c-.349-.318-.694-.647-1.032-.985.077-.107.153-.215.23-.322z"
+].join("");
+
+// 🐅 核心图腾：微缩版完整虎符 
 const MiniTigerTallyPassIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM9.763 9.41c.123-.162.253-.32.389-.474a7.56 7.56 0 01-.215-2.467c.419.16.846.303 1.276.433a5.837 5.837 0 01.774 1.96c.491.41.994.806 1.51 1.187a6.627 6.627 0 00.593-3.492c.47.248.944.48 1.423.7a4.947 4.947 0 01-1.31 1.994 11.4 11.4 0 012.58 1.132c-.348.445-.68.904-1 1.376-.427-.069-.857-.13-1.287-.184a6.263 6.263 0 00-.935-2.274 5.03 5.03 0 01-1.645 1.231c-.306.566-.63 1.121-.97 1.666.546.17 1.096.327 1.648.47a4.89 4.89 0 01-1.375 2.086 10.25 10.25 0 012.656.874c-.408.492-.797.998-1.17 1.517-.47-.15-.938-.31-1.404-.477a6.766 6.766 0 00-1.078-2.532 4.788 4.788 0 01-1.52 1.232c-.368.478-.753.942-1.154 1.391.482.333.981.644 1.492.935-.447.438-.877.89-1.288 1.354a11.88 11.88 0 012.32 1.101c-.242.256-.482.516-.718.78a8.2 8.2 0 00-2.148-1.034 6.15 6.15 0 01-1.382 1.617c-.044.05-.087.1-.13.151a9.75 9.75 0 01-1.865-1.023 6.188 6.188 0 001.36-1.613c-.16-.094-.32-.191-.479-.29a8.08 8.08 0 01-2.131-1.012 5.98 5.98 0 001.343-1.594c-.349-.318-.694-.647-1.032-.985.077-.107.153-.215.23-.322z" clipRule="evenodd" />
+    <path fillRule="evenodd" clipRule="evenodd" d={TIGER_PASS_PATH} />
   </svg>
 );
 
-// 🐅 核心图腾：微缩版断裂虎符 (阻断状态)
+// 🐅 核心图腾：微缩版断裂虎符 
 const MiniTigerTallyBlockIcon = ({ className }: { className?: string }) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
       <path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75 0 2.2.73 4.23 1.95 5.85L11 12l-2-3 3-4 1.5-2.5z" />
@@ -38,6 +67,7 @@ const MiniTigerTallyBlockIcon = ({ className }: { className?: string }) => (
 const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: number }) => {
   const isThinking = status === 'thinking' || status === 'uploading';
   const isComplete = status === 'complete';
+  const isError = status === 'error'; // ✅ 熔断标识
   const hasThreats = ruleCount > 0;
 
   if (isThinking) {
@@ -52,7 +82,7 @@ const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: nu
     );
   }
 
-  // ✅ 核心新增：系统异常的熔断视觉 (Fail-Closed)
+  // ✅ Fail-Closed 强制熔断视觉
   if (isError) {
     return (
         <div className="h-full flex flex-col items-center justify-center relative overflow-hidden">
@@ -71,14 +101,23 @@ const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: nu
         return (
             <div className="h-full flex flex-col items-center justify-center overflow-hidden relative">
                 <div className="absolute inset-0 bg-rose-950/20 animate-pulse z-0"></div>
-                
                 <div className="relative z-10 flex flex-col items-center">
                     <div className="relative w-48 h-48 mb-8">
-                        <div className="absolute left-0 w-1/2 h-full bg-gradient-to-br from-rose-900 via-red-800 to-rose-950 rounded-l-full border-r-2 border-rose-500/50 animate-in slide-in-from-right-10 fade-out duration-1000 fill-mode-forwards" style={{ transform: 'translateX(-25px) rotate(-10deg)', boxShadow: 'inset 0 0 20px rgba(225, 29, 72, 0.4)' }}>
-                           <div className="absolute inset-0 opacity-30 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMjAgMjBMMCAwSDQwTDIwIDIwWk0yMCAyMEw0MCA0MEgwTDIwIDIwWiIgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIwLjEiLz48L3N2Zz4=')]"></div>
+                        <div 
+                          className={"absolute left-0 w-1/2 h-full bg-gradient-to-br from-rose-900 via-red-800 " + 
+                                     "to-rose-950 rounded-l-full border-r-2 border-rose-500/50 animate-in " + 
+                                     "slide-in-from-right-10 fade-out duration-1000 fill-mode-forwards"}
+                          style={{ transform: 'translateX(-25px) rotate(-10deg)', boxShadow: 'inset 0 0 20px rgba(225, 29, 72, 0.4)' }}
+                        >
+                           <div className="absolute inset-0 opacity-30" style={{ backgroundImage: BG_PATTERN_RED }}></div>
                         </div>
-                        <div className="absolute right-0 w-1/2 h-full bg-gradient-to-bl from-rose-900 via-red-800 to-rose-950 rounded-r-full border-l-2 border-rose-500/50 animate-in slide-in-from-left-10 fade-out duration-1000 fill-mode-forwards" style={{ transform: 'translateX(25px) rotate(10deg)', boxShadow: 'inset 0 0 20px rgba(225, 29, 72, 0.4)' }}>
-                           <div className="absolute inset-0 opacity-30 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMjAgMjBMMCAwSDQwTDIwIDIwWk0yMCAyMEw0MCA0MEgwTDIwIDIwWiIgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIwLjEiLz48L3N2Zz4=')]"></div>
+                        <div 
+                          className={"absolute right-0 w-1/2 h-full bg-gradient-to-bl from-rose-900 via-red-800 " + 
+                                     "to-rose-950 rounded-r-full border-l-2 border-rose-500/50 animate-in " + 
+                                     "slide-in-from-left-10 fade-out duration-1000 fill-mode-forwards"}
+                          style={{ transform: 'translateX(25px) rotate(10deg)', boxShadow: 'inset 0 0 20px rgba(225, 29, 72, 0.4)' }}
+                        >
+                           <div className="absolute inset-0 opacity-30" style={{ backgroundImage: BG_PATTERN_RED }}></div>
                         </div>
                         <AlertTriangle className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 text-rose-500 animate-ping" />
                     </div>
@@ -91,15 +130,22 @@ const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: nu
         return (
             <div className="h-full flex flex-col items-center justify-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-amber-600/10 animate-pulse z-0" style={{ animationDuration: '4s' }}></div>
-
                 <div className="relative z-10 flex flex-col items-center">
                     <div className="relative w-48 h-48 mb-8 flex justify-center items-center">
                         <div className="absolute inset-0 bg-amber-600/20 blur-2xl rounded-full animate-pulse"></div>
-                        <div className="w-24 h-full bg-gradient-to-r from-yellow-700 via-amber-600 to-yellow-800 rounded-l-full border-r border-amber-300/50 animate-in slide-in-from-left-full duration-1000 fill-mode-forwards z-10 shadow-[inset_0_0_20px_rgba(217,119,6,0.4)]">
-                           <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMTAgMTBMNDAgNDBIMTBWMTBaIiBmaWxsPSIjRkZEMzAwIiBmaWxsLW9wYWNpdHk9IjAuMiIvPjwvc3ZnPg==')]"></div>
+                        <div 
+                          className={"w-24 h-full bg-gradient-to-r from-yellow-700 via-amber-600 to-yellow-800 " + 
+                                     "rounded-l-full border-r border-amber-300/50 animate-in slide-in-from-left-full " + 
+                                     "duration-1000 fill-mode-forwards z-10 shadow-[inset_0_0_20px_rgba(217,119,6,0.4)]"}
+                        >
+                           <div className="absolute inset-0 opacity-40 mix-blend-overlay" style={{ backgroundImage: BG_PATTERN_GOLD_L }}></div>
                         </div>
-                        <div className="w-24 h-full bg-gradient-to-l from-yellow-700 via-amber-600 to-yellow-800 rounded-r-full border-l border-amber-300/50 animate-in slide-in-from-right-full duration-1000 fill-mode-forwards z-10 shadow-[inset_0_0_20px_rgba(217,119,6,0.4)] -ml-[1px]">
-                           <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc0MCcgdmlld0JveD0nMCAwIDQwIDQwJz48cGF0aCBkPSJNMzAgMzBMMCAwSDMwVjMwWiIgZmlsbD0iI0ZGRDMwMCIgZmlsbC1vcGFjaXR5PSIwLjIiLz48L3N2Zz4=')]"></div>
+                        <div 
+                          className={"w-24 h-full bg-gradient-to-l from-yellow-700 via-amber-600 to-yellow-800 " + 
+                                     "rounded-r-full border-l border-amber-300/50 animate-in slide-in-from-right-full " + 
+                                     "duration-1000 fill-mode-forwards z-10 shadow-[inset_0_0_20px_rgba(217,119,6,0.4)] -ml-[1px]"}
+                        >
+                           <div className="absolute inset-0 opacity-40 mix-blend-overlay" style={{ backgroundImage: BG_PATTERN_GOLD_R }}></div>
                         </div>
                         <Shield className="absolute w-16 h-16 text-amber-200 animate-in zoom-in duration-500 delay-1000 fill-mode-forwards z-20 drop-shadow-[0_0_15px_rgba(253,230,138,0.8)]" />
                     </div>
@@ -201,7 +247,7 @@ export default function OneTrustDashboard() {
 
       const textOutput = runData.data.outputs.text;
       
-      // 🛡️ 军工级熔断机制：拒绝静默放行 (Fail-Closed)
+      // ✅ 军工级熔断机制
       if (!textOutput || textOutput === "ERROR_LLM_EMPTY" || textOutput === "ERROR_LLM_MALFORMED") {
          throw new Error("契约法理特征提取失败。深海引擎未返回有效卷宗，为防止漏判，已触发强制物理熔断！");
       }
@@ -237,7 +283,7 @@ export default function OneTrustDashboard() {
 
       <div className="grid grid-cols-3 gap-6 h-[85vh] min-w-[1200px] overflow-x-auto">
         
-        {/* 第一屏：契约收纳处 */}
+        {/* 第一屏 */}
         <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 flex flex-col relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-600/50 to-transparent"></div>
           <h2 className="text-lg font-serif font-bold text-slate-200 mb-4 flex items-center gap-2">
@@ -263,14 +309,13 @@ export default function OneTrustDashboard() {
           </div>
         </div>
 
-        {/* 第二屏：法典锻造炉 */}
+        {/* 第二屏 */}
         <div className="bg-[#03070C] border border-amber-900/20 rounded-xl p-6 flex flex-col relative shadow-[0_0_40px_rgba(217,119,6,0.03)] overflow-hidden">
           <h2 className="text-lg font-serif font-bold text-slate-200 mb-4 flex items-center gap-2">
             <Terminal className="w-5 h-5 text-amber-600"/> 法典锻造炉 (The Legislative Forge)
           </h2>
           <div className="flex-1 bg-black/80 border border-slate-800/80 rounded-lg font-mono text-sm flex flex-col relative overflow-hidden">
             
-            {/* ✅ 任务三：仲裁人话版摘要 (The Executive Summary) */}
             {(status !== 'idle') && (
               <div className="bg-gradient-to-r from-slate-900/95 to-black border-b border-amber-900/40 p-3 px-4 flex items-center gap-3 sticky top-0 z-10 shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
                 <Scale className="w-4 h-4 text-amber-500" />
@@ -278,7 +323,7 @@ export default function OneTrustDashboard() {
                   {status === 'complete' 
                     ? `[ 仲裁纪要 ] 成功提取 ${verdictRules.length} 条法定红线规则，已生成物理拦截网并固化至司法链。`
                     : status === 'error'
-                    ? '[ 仲裁纪要 ] 仲裁程序异常中断，请检查天眼网络。'
+                    ? '[ 仲裁纪要 ] 仲裁程序异常中断，系统已执行安全物理熔断。'
                     : '[ 仲裁纪要 ] 正在同步提取法定红线，请稍候...'}
                 </span>
               </div>
@@ -294,7 +339,7 @@ export default function OneTrustDashboard() {
           </div>
         </div>
 
-        {/* 第三屏：虎符仲裁庭 */}
+        {/* 第三屏 */}
         <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 flex flex-col shadow-2xl relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-amber-900/5 via-transparent to-rose-900/5 pointer-events-none"></div>
           
@@ -312,7 +357,6 @@ export default function OneTrustDashboard() {
                     
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-700"></div>
 
-                    {/* ✅ 任务一：词汇法理化 (裁定违规) */}
                     <div className="absolute top-0 right-0 bg-gradient-to-l from-rose-900 to-red-800 text-slate-100 text-[10px] font-bold px-3 py-1.5 flex items-center gap-1.5 shadow-[0_2px_10px_rgba(225,29,72,0.4)] rounded-bl-lg border-b border-l border-rose-500/30">
                       <Scale className="w-3 h-3 text-rose-300" /> 裁定违规 (Ruling: Violation)
                     </div>
@@ -356,10 +400,8 @@ export default function OneTrustDashboard() {
                            </div>
                         </div>
                         
-                        {/* ✅ 任务二：图腾具象化 (红光闪烁的断裂虎符与封泥) */}
                         <div className="border-2 border-rose-900/60 bg-rose-950/40 px-2.5 py-1.5 rounded flex items-center gap-1.5 transform -rotate-2 relative overflow-hidden group shadow-[0_0_10px_rgba(225,29,72,0.1)]">
                            <div className="absolute inset-0 bg-rose-500/10 animate-pulse duration-1000"></div>
-                           {/* 动态断裂虎符图标闪烁红光 */}
                            <MiniTigerTallyBlockIcon className="w-4 h-4 text-rose-500 drop-shadow-[0_0_8px_rgba(225,29,72,0.8)] animate-pulse" />
                            <span className="text-[10px] text-rose-500 font-serif font-bold tracking-widest relative z-10">司法链已固化</span>
                         </div>
