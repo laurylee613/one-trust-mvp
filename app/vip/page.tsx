@@ -3,13 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Shield, ChevronDown, Lock, Unlock, FileText, CheckCircle2, Zap, Scale, RotateCcw } from 'lucide-react';
 
-// ==========================================
-// 🚨 核心配置与密钥字典
-// ==========================================
-const VALID_INVITE_CODES: Record<string, string> = {
-  'TRIBUNAL-X7A9': 'ALPHA-001 (张三专属渠道)',
-  'TRIBUNAL-B4V2': 'ALPHA-002 (李四专属渠道)'
-};
 
 // ==========================================
 // 🧩 模块 1：权力与利润视觉暴击
@@ -228,59 +221,97 @@ const ValueProps = () => (
 );
 
 // ==========================================
-// 🧩 模块 4：回旋镖门禁 (RedTeam 升级版)
+// 🧩 模块 4：回旋镖门禁 (连通极乐空间云端大脑)
 // ==========================================
 const InviteGate = ({ onUnlock }: { onUnlock: (code: string) => void }) => {
-  const [code, setCode] = useState('');
-  const [error, setError] = useState(false);
-
-  const handleUnlock = () => {
-    if (VALID_INVITE_CODES[code.trim().toUpperCase()]) {
-      setError(false);
-      onUnlock(code.trim().toUpperCase());
-    } else {
-      setError(true);
-      if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate([50, 50, 50]);
-    }
+    const [code, setCode] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+  
+    const handleUnlock = async () => {
+      const trimmedCode = code.trim().toUpperCase();
+      if (!trimmedCode) return;
+  
+      setIsLoading(true);
+      setErrorMsg('');
+  
+      try {
+        // 🚀 发射真实的请求到极乐空间后端 API
+        const res = await fetch('/api/verify-invite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: trimmedCode })
+        });
+  
+        const data = await res.json();
+  
+        if (res.ok && data.success) {
+          // 鉴权通过，核销成功！
+          if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate([100]);
+          onUnlock(trimmedCode);
+        } else {
+          // 鉴权失败 (码不对或次数耗尽)
+          setErrorMsg(data.error || '无效的序列号，虎符引擎拒绝响应');
+          if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate([50, 50, 50]);
+        }
+      } catch (err) {
+        setErrorMsg('云端网络异常，请稍后重试');
+        if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate([50, 50, 50]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    return (
+      <div className="py-16 px-6 relative flex flex-col items-center border-t border-slate-800 bg-black">
+        <div className="text-[10px] text-slate-500 font-mono tracking-widest mb-6 border border-slate-800 px-3 py-1 rounded-full">
+          🔒 定向邀请访问 (BY INVITATION ONLY)
+        </div>
+        <h2 className="text-lg font-serif text-slate-200 text-center mb-8 leading-relaxed">
+          2026 领航者计划<br/><span className="text-[#D4AF37]">本季度仅限 3 席</span>
+        </h2>
+        
+        <div className="w-full max-w-sm bg-slate-900/60 border border-slate-800 rounded-xl p-6 text-center shadow-2xl">
+          <Lock className="w-8 h-8 text-[#D4AF37]/80 mx-auto mb-4 drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]" />
+          <p className="text-xs text-slate-500 mb-6 leading-relaxed">
+            权限已锁定。如需获取领航者内测资格及《合规产品化菜单》，请联系专属联系人索取内部邀请码。
+          </p>
+          
+          <input 
+            type="text" 
+            value={code}
+            onChange={(e) => { setCode(e.target.value); setErrorMsg(''); }}
+            placeholder="请输入您的 Alpha 级专属邀请码"
+            disabled={isLoading}
+            className={`w-full bg-black border ${errorMsg ? 'border-rose-500 text-rose-500' : 'border-slate-700 text-[#D4AF37]'} rounded-lg px-4 py-3 text-center font-serif text-sm mb-2 uppercase focus:outline-none focus:border-[#D4AF37] transition-colors disabled:opacity-50`}
+          />
+          
+          {/* 精确的错误提示位 */}
+          {errorMsg && (
+            <div className="text-rose-500 text-[10px] font-mono mb-4 animate-in slide-in-from-top-1">
+              {errorMsg}
+            </div>
+          )}
+          
+          <button 
+            onClick={handleUnlock}
+            disabled={isLoading || !code.trim()}
+            className="w-full mt-2 bg-[#D4AF37] hover:bg-[#b5952f] disabled:bg-slate-700 disabled:text-slate-500 text-black font-bold font-serif text-sm py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+          >
+            {isLoading ? (
+              <span className="flex items-center gap-2"><Zap className="w-4 h-4 animate-pulse" /> 正在连线极乐空间...</span>
+            ) : (
+              <span className="flex items-center gap-2"><Unlock className="w-4 h-4" /> 解锁领航者权益</span>
+            )}
+          </button>
+  
+          <p className="text-[10px] text-slate-500 mt-4 opacity-70">
+            提示：该序列号通常由向您推荐本系统的同行朋友持有。
+          </p>
+        </div>
+      </div>
+    );
   };
-
-  return (
-    <div className="py-16 px-6 relative flex flex-col items-center border-t border-slate-800 bg-black">
-      <div className="text-[10px] text-slate-500 font-mono tracking-widest mb-6 border border-slate-800 px-3 py-1 rounded-full">
-        🔒 定向邀请访问 (BY INVITATION ONLY)
-      </div>
-      <h2 className="text-lg font-serif text-slate-200 text-center mb-8 leading-relaxed">
-        2026 领航者计划<br/><span className="text-[#D4AF37]">本月度仅限 3 席</span>
-      </h2>
-      
-      <div className="w-full max-w-sm bg-slate-900/60 border border-slate-800 rounded-xl p-6 text-center shadow-2xl">
-        <Lock className="w-8 h-8 text-[#D4AF37]/80 mx-auto mb-4 drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]" />
-        <p className="text-xs text-slate-500 mb-6 leading-relaxed">
-          权限已锁定。如需获取领航者内测资格及《合规产品化菜单》，请联系专属联系人索取内部邀请码。
-        </p>
-        
-        <input 
-          type="text" 
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          placeholder="请输入您的 Alpha 级专属邀请码"
-          className={`w-full bg-black border ${error ? 'border-rose-500 text-rose-500' : 'border-slate-700 text-[#D4AF37]'} rounded-lg px-4 py-3 text-center font-serif text-sm mb-4 uppercase focus:outline-none focus:border-[#D4AF37] transition-colors`}
-        />
-        
-        <button 
-          onClick={handleUnlock}
-          className="w-full bg-[#D4AF37] hover:bg-[#b5952f] text-black font-bold font-serif text-sm py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
-        >
-          <Unlock className="w-4 h-4" /> 解锁领航者权益
-        </button>
-
-        <p className="text-[10px] text-slate-500 mt-4 opacity-70">
-          提示：该序列号通常由向您推荐本系统的朋友持有。
-        </p>
-      </div>
-    </div>
-  );
-};
 
 // ==========================================
 // 🧩 模块 5：核武菜单
