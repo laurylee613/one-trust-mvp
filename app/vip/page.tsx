@@ -115,10 +115,10 @@ const LiveForgeScanner = () => {
                 {/* 路线 A 文字 */}
                 {scanState === 'parsing' && "> 锁定违规实体：数据出境限制"}
                 {scanState === 'blocking' && "> 编译拦截指令：AST 生成中..."}
-                {scanState === 'stamped' && <span className="text-rose-500">> 威胁已物理清除</span>}
+                {scanState === 'stamped' && <span className="text-rose-500">&gt; 威胁已物理清除</span>}
                 
                 {/* 路线 B 文字 */}
-                {scanState === 'rejected' && <span className="text-slate-500">> 引擎挂起：未检测到法理约束</span>}
+                {scanState === 'rejected' && <span className="text-slate-500">&gt; 引擎挂起：未检测到法理约束</span>}
               </div>
   
               {/* 路线 A 动画区 */}
