@@ -170,7 +170,8 @@ const LiveForgeScanner = () => {
                 </div>
                 <button 
                   onClick={handleReUpload}
-                  className="mt-6 flex items-center gap-2 text-xs text-[#00E5FF] border border-[#00E5FF]/30 px-5 py-2.5 rounded-full hover:bg-[#00E5FF]/10 transition-colors bg-black/50"
+                  // 💎 尚锐的终极要求：暗金底色 + 微弱光晕 + 呼吸灯效 (animate-pulse)
+                  className="mt-6 flex items-center gap-2 text-xs text-[#D4AF37] border border-[#D4AF37]/50 px-5 py-2.5 rounded-full bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)] animate-pulse"
                 >
                   <RotateCcw className="w-3 h-3" /> 重新装填真实契约
                 </button>
@@ -274,7 +275,7 @@ const InviteGate = ({ onUnlock }: { onUnlock: (code: string) => void }) => {
         </button>
 
         <p className="text-[10px] text-slate-500 mt-4 opacity-70">
-          提示：该序列号通常由向您推荐本系统的同行朋友持有。
+          提示：该序列号通常由向您推荐本系统的朋友持有。
         </p>
       </div>
     </div>
