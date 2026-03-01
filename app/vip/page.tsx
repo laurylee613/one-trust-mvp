@@ -40,109 +40,140 @@ const HeroSection = () => (
 );
 
 // ==========================================
-// 🧩 模块 2：实弹靶场 (Live Forge Scanner) - 5秒视觉高潮
+// 🧩 模块 2：实弹靶场 (Live Forge Scanner) - 具备本地智能嗅探能力
 // ==========================================
 const LiveForgeScanner = () => {
-  const [scanState, setScanState] = useState<'idle' | 'uploading' | 'scanning' | 'parsing' | 'blocking' | 'stamped'>('idle');
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    audioRef.current = new Audio('/kada.mp3');
-    audioRef.current.volume = 1.0;
-  }, []);
-
-  const triggerAnimationSequence = () => {
-    setScanState('scanning');
-    
-    // 1-2s: 扫描
-    setTimeout(() => setScanState('parsing'), 1500);
-    // 3s: 解析红线
-    setTimeout(() => setScanState('blocking'), 3000);
-    // 4s: 敲击违规代码
-    setTimeout(() => {
-      setScanState('stamped');
-      // 💎 物理震动 API (移动端专属杀器)
-      if (typeof window !== 'undefined' && navigator.vibrate) {
-        navigator.vibrate([200, 100, 200]);
-      }
-      // 💎 咔哒音效
-      if (audioRef.current) audioRef.current.play().catch(()=>console.log('Audio blocked'));
-    }, 4500);
-  };
-
-  const handleSimulateUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) {
-      triggerAnimationSequence();
-    }
-  };
-
-  return (
-    <div className="py-16 px-6 relative border-t border-[#D4AF37]/10 bg-gradient-to-b from-[#0B132B] to-black">
-      <h2 className="text-xl font-serif text-[#D4AF37] mb-8 text-center tracking-widest">极速靶场 (The Live Forge)</h2>
+    const [scanState, setScanState] = useState<'idle' | 'uploading' | 'scanning' | 'parsing' | 'blocking' | 'stamped' | 'rejected'>('idle');
+    const [fileName, setFileName] = useState('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+    useEffect(() => {
+      audioRef.current = new Audio('/kada.mp3');
+      audioRef.current.volume = 1.0;
+    }, []);
+  
+    const triggerAnimationSequence = (isLegalDoc: boolean) => {
+      setScanState('scanning');
       
-      <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 relative overflow-hidden min-h-[300px] flex flex-col justify-center">
-        {scanState === 'idle' && (
-          <div onClick={() => fileInputRef.current?.click()} className="flex flex-col items-center justify-center cursor-pointer group">
-            <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-4 group-hover:bg-[#D4AF37]/20 transition-all">
-              <FileText className="w-8 h-8 text-[#D4AF37]" />
+      if (isLegalDoc) {
+        // 🚀 路线 A：高危合同，触发物理熔断剧本
+        setTimeout(() => setScanState('parsing'), 1500);
+        setTimeout(() => setScanState('blocking'), 3000);
+        setTimeout(() => {
+          setScanState('stamped');
+          if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate([200, 100, 200]);
+          if (audioRef.current) audioRef.current.play().catch(()=>console.log('Audio blocked'));
+        }, 4500);
+      } else {
+        // 🛡️ 路线 B：非法律文本，触发高冷拒收剧本
+        setTimeout(() => setScanState('parsing'), 1500);
+        setTimeout(() => {
+          setScanState('rejected');
+          // 轻微震动提示异常
+          if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate([50]);
+        }, 2500);
+      }
+    };
+  
+    const handleSimulateUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        setFileName(file.name);
+        // 🧠 前端本地轻量级嗅探器：通过文件名特征判断是否为法律文书
+        const legalKeywords = ['合同', '协议', '保密', '合规', '数据', '条款', '隐私', '声明', 'nda', 'sow', 'contract', 'agreement', 'privacy', 'policy', '法'];
+        const isLikelyLegal = legalKeywords.some(keyword => file.name.toLowerCase().includes(keyword));
+        
+        triggerAnimationSequence(isLikelyLegal);
+      }
+    };
+  
+    return (
+      <div className="py-16 px-6 relative border-t border-[#D4AF37]/10 bg-gradient-to-b from-[#0B132B] to-black">
+        <h2 className="text-xl font-serif text-[#D4AF37] mb-8 text-center tracking-widest">极速靶场 (The Live Forge)</h2>
+        
+        <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 relative overflow-hidden min-h-[300px] flex flex-col justify-center">
+          {scanState === 'idle' && (
+            <div onClick={() => fileInputRef.current?.click()} className="flex flex-col items-center justify-center cursor-pointer group">
+              <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-4 group-hover:bg-[#D4AF37]/20 transition-all">
+                <FileText className="w-8 h-8 text-[#D4AF37]" />
+              </div>
+              <p className="text-center text-sm text-slate-400 font-serif leading-relaxed">
+                请上传一份保密协议或合规 PDF<br/>
+                <span className="text-xs text-slate-500">(仅限前 3 页，阅后即焚)</span>
+              </p>
+              <input type="file" ref={fileInputRef} onChange={handleSimulateUpload} className="hidden" accept=".pdf,.docx,.doc,.txt" />
             </div>
-            <p className="text-center text-sm text-slate-400 font-serif leading-relaxed">
-              请上传一份保密协议或合规 PDF<br/>
-              <span className="text-xs text-slate-500">(仅限前 3 页，阅后即焚)</span>
-            </p>
-            <input type="file" ref={fileInputRef} onChange={handleSimulateUpload} className="hidden" accept=".pdf,.docx,.txt" />
+          )}
+  
+          {scanState !== 'idle' && (
+            <div className="w-full flex flex-col h-full space-y-4">
+              <div className="text-xs font-mono text-[#00E5FF] border-b border-[#00E5FF]/20 pb-2 flex items-center gap-2">
+                {(scanState === 'scanning' || scanState === 'parsing' || scanState === 'blocking') && <Zap className="w-3 h-3 animate-pulse" />}
+                {scanState === 'scanning' && "> 浅层特征提取中..."}
+                
+                {/* 路线 A 文字 */}
+                {scanState === 'parsing' && "> 锁定违规实体：数据出境限制"}
+                {scanState === 'blocking' && "> 编译拦截指令：AST 生成中..."}
+                {scanState === 'stamped' && <span className="text-rose-500">> 威胁已物理清除</span>}
+                
+                {/* 路线 B 文字 */}
+                {scanState === 'rejected' && <span className="text-slate-500">> 引擎挂起：未检测到法理约束</span>}
+              </div>
+  
+              {/* 路线 A 动画区 */}
+              {(scanState === 'parsing' || scanState === 'blocking' || scanState === 'stamped') && (
+                <div className="bg-black/60 p-3 rounded border border-slate-800 animate-in fade-in duration-500">
+                  <span className="text-[#00E5FF] text-[11px] font-serif bg-[#00E5FF]/10 px-1">"未经脱敏不得跨境传输"</span>
+                </div>
+              )}
+              {(scanState === 'blocking' || scanState === 'stamped') && (
+                <div className="relative mt-auto">
+                  <div className="font-mono text-[10px] text-slate-500 bg-[#0A0F18] p-3 rounded">
+                    <span className="text-rose-400">🚨 INTERCEPT DETECTED</span><br/>
+                    <span className="typing-effect text-slate-400">send_data(user_info, overseas_server)</span>
+                  </div>
+                  {scanState === 'stamped' && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in zoom-in duration-200">
+                      <div className="border-4 border-rose-600 text-rose-600 font-black text-3xl tracking-[0.3em] px-4 py-2 transform -rotate-12 shadow-[0_0_30px_rgba(225,29,72,0.6)] rounded">BLOCK</div>
+                    </div>
+                  )}
+                </div>
+              )}
+  
+              {/* 路线 B 动画区：高冷拒收 */}
+              {scanState === 'rejected' && (
+                <div className="flex flex-col items-center justify-center mt-8 animate-in slide-in-from-bottom-4 duration-500">
+                  <Scale className="w-12 h-12 text-slate-600 mb-4 opacity-50" />
+                  <div className="text-center font-mono text-xs text-slate-400 space-y-2 bg-[#0A0F18] p-4 rounded border border-slate-800">
+                    <p className="text-slate-300">卷宗分类：非典型契约文本</p>
+                    <p>未在文件中检测到实质性法律约束与商业红线。</p>
+                    <p className="text-[#D4AF37] mt-2">虎符引擎拒绝浪费算力。</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+  
+        {/* 路线 A 底部文案 */}
+        {scanState === 'stamped' && (
+          <div className="mt-6 p-4 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-lg animate-in slide-in-from-bottom-4 duration-500">
+            <p className="text-sm text-[#D4AF37] font-serif font-bold mb-2">您的意志，机器已执行。</p>
+            <p className="text-xs text-slate-400 leading-relaxed">仅凭刚才这一击，您已为客户免除了千万级合规罚款风险。(此为极速演示，真实业务拦截请前往 Web 端测试)</p>
           </div>
         )}
-
-        {scanState !== 'idle' && (
-          <div className="w-full flex flex-col h-full space-y-4">
-            {/* 顶部：进度 */}
-            <div className="text-xs font-mono text-[#00E5FF] border-b border-[#00E5FF]/20 pb-2 flex items-center gap-2">
-              {(scanState === 'scanning' || scanState === 'parsing' || scanState === 'blocking') && <Zap className="w-3 h-3 animate-pulse" />}
-              {scanState === 'scanning' && "> Dify 引擎已接入... 提取法理红线..."}
-              {scanState === 'parsing' && "> 锁定违规实体：数据出境限制"}
-              {scanState === 'blocking' && "> 编译拦截指令：AST 生成中..."}
-              {scanState === 'stamped' && <span className="text-rose-500">&gt; 威胁已物理清除</span>}
-            </div>
-
-            {/* 中间：解析结果 */}
-            {(scanState === 'parsing' || scanState === 'blocking' || scanState === 'stamped') && (
-              <div className="bg-black/60 p-3 rounded border border-slate-800 animate-in fade-in duration-500">
-                <span className="text-[#00E5FF] text-[11px] font-serif bg-[#00E5FF]/10 px-1">"未经脱敏不得跨境传输"</span>
-              </div>
-            )}
-
-            {/* 底部：代码拦截与印章 */}
-            {(scanState === 'blocking' || scanState === 'stamped') && (
-              <div className="relative mt-auto">
-                <div className="font-mono text-[10px] text-slate-500 bg-[#0A0F18] p-3 rounded">
-                  <span className="text-rose-400">🚨 INTERCEPT DETECTED</span><br/>
-                  <span className="typing-effect text-slate-400">send_data(user_info, overseas_server)</span>
-                </div>
-                
-                {scanState === 'stamped' && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in zoom-in duration-200">
-                    <div className="border-4 border-rose-600 text-rose-600 font-black text-3xl tracking-[0.3em] px-4 py-2 transform -rotate-12 shadow-[0_0_30px_rgba(225,29,72,0.6)] rounded">
-                      BLOCK
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
+  
+        {/* 路线 B 底部文案 */}
+        {scanState === 'rejected' && (
+          <div className="mt-6 p-4 bg-slate-900 border border-slate-800 rounded-lg animate-in slide-in-from-bottom-4 duration-500">
+            <p className="text-sm text-slate-300 font-serif font-bold mb-2">测试系统边界？明智之举。</p>
+            <p className="text-xs text-slate-500 leading-relaxed">我们能精准分辨业务文档与法律文书。要想体验真正的机器物理熔断，请上传一份包含隐患的真实 NDA / SOW，或索取邀请码前往 Web 核心大屏进行深度测试。</p>
           </div>
         )}
       </div>
-
-      {scanState === 'stamped' && (
-        <div className="mt-6 p-4 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-lg animate-in slide-in-from-bottom-4 duration-500">
-          <p className="text-sm text-[#D4AF37] font-serif font-bold mb-2">您的意志，机器已执行。</p>
-          <p className="text-xs text-slate-400 leading-relaxed">仅凭刚才这一击，您已为客户免除了千万级合规罚款风险。(注：正式版将生成防篡改司法哈希链。)</p>
-        </div>
-      )}
-    </div>
-  );
-};
+    );
+  };
 
 // ==========================================
 // 🧩 模块 3：商业洗脑 (Value Props)
