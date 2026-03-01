@@ -228,6 +228,18 @@ const InviteGate = ({ onUnlock }: { onUnlock: (code: string) => void }) => {
     const [errorMsg, setErrorMsg] = useState('');
     const [isLoading, setIsLoading] = useState(false);
   
+    // 💎 增加这段：监听网址上的 ?code=XXX，实现自动装填
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const urlCode = params.get('code');
+        if (urlCode) {
+          setCode(urlCode.toUpperCase());
+        }
+      }
+    }, []);
+
+  
     const handleUnlock = async () => {
       const trimmedCode = code.trim().toUpperCase();
       if (!trimmedCode) return;
