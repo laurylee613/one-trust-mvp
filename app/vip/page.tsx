@@ -250,7 +250,7 @@ const InviteGate = ({ onUnlock }: { onUnlock: (code: string) => void }) => {
         🔒 定向邀请访问 (BY INVITATION ONLY)
       </div>
       <h2 className="text-lg font-serif text-slate-200 text-center mb-8 leading-relaxed">
-        2026 领航者计划<br/><span className="text-[#D4AF37]">本季度仅限 3 席</span>
+        2026 领航者计划<br/><span className="text-[#D4AF37]">本月度仅限 3 席</span>
       </h2>
       
       <div className="w-full max-w-sm bg-slate-900/60 border border-slate-800 rounded-xl p-6 text-center shadow-2xl">
