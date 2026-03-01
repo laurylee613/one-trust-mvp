@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Shield, ChevronDown, Lock, Unlock, FileText, CheckCircle2, Zap, Scale, RotateCcw } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 
 // ==========================================
@@ -325,47 +326,76 @@ const InviteGate = ({ onUnlock }: { onUnlock: (code: string) => void }) => {
     );
   };
 
+
 // ==========================================
-// 🧩 模块 5：核武菜单
+// 🧩 模块 5：登舰传送门 (重构版：展示价值，而非强推价格)
 // ==========================================
-const PricingMenu = () => (
-  <div className="py-16 px-6 border-t border-[#D4AF37]/30 bg-gradient-to-b from-[#0B132B] to-black animate-in slide-in-from-bottom-8 duration-700">
-    <div className="flex flex-col items-center mb-8 text-center">
-      <div className="w-12 h-12 bg-[#D4AF37]/20 rounded-full flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(212,175,55,0.4)]">
-        <Unlock className="w-6 h-6 text-[#D4AF37]" />
-      </div>
-      <h2 className="text-xl font-serif text-[#D4AF37] mb-2">验证通过。虎符引擎已解锁。</h2>
-      <p className="text-xs text-slate-400">尊贵的领航者：您的专属《合规产品化菜单 v2.0》已生成。</p>
-    </div>
+const UnlockedPortal = ({ activeCode }: { activeCode: string }) => {
+    const router = useRouter();
+    const [isRedirecting, setIsRedirecting] = useState(false);
+  
+    const handleEnterCore = () => {
+      setIsRedirecting(true);
+      // 模拟 1.5 秒的系统启动加载感，然后将客户传送到 V2.1 真实大屏
+      // 💎 核心安全补丁：在浏览器底层打上防伪烙印
+      if (typeof window !== 'undefined') {
+      sessionStorage.setItem('tribunal_vip_pass', activeCode);
+      if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+  }
 
-    <div className="space-y-4">
-      <div className="bg-slate-900/80 border border-[#D4AF37]/50 rounded-xl p-5 relative overflow-hidden">
-        <div className="absolute top-0 right-0 bg-[#D4AF37] text-black text-[10px] font-bold px-2 py-1 rounded-bl-lg">主推款</div>
-        <h3 className="text-lg font-serif text-slate-200 mb-1">标准熔断包 (Standard)</h3>
-        <div className="text-2xl font-mono text-[#D4AF37] mb-3">¥300,000 <span className="text-xs text-slate-500">/年</span></div>
-        <ul className="text-xs text-slate-400 space-y-2">
-          <li className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-[#00E5FF]"/> 包含 5 个核心业务节点的 AST 拦截</li>
-          <li className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-[#00E5FF]"/> 律所联合署名 (Powered by One Tribunal)</li>
-        </ul>
+  // 1.5 秒后传送
+  setTimeout(() => {
+    // 现在不需要带参数了，直接去无参数的纯净根目录
+    router.push(`/`); 
+  }, 1500);
+    };
+  
+    return (
+      <div className="py-16 px-6 border-t border-[#D4AF37]/30 bg-gradient-to-b from-[#0B132B] to-black animate-in slide-in-from-bottom-8 duration-700">
+        <div className="flex flex-col items-center mb-8 text-center">
+          <div className="w-16 h-16 bg-[#D4AF37]/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(212,175,55,0.4)] border border-[#D4AF37]/50">
+            <Shield className="w-8 h-8 text-[#D4AF37]" />
+          </div>
+          <h2 className="text-2xl font-serif text-[#D4AF37] mb-2 tracking-widest">身份确认。协议已签署。</h2>
+          <p className="text-sm text-slate-400 font-mono leading-relaxed mt-2">
+            欢迎您，Alpha 级领航者。<br/>
+            系统已为您分配 <span className="text-[#00E5FF]">最高权限 (Enterprise Tier)</span> 临时沙箱。
+          </p>
+        </div>
+  
+        <div className="bg-slate-900/80 border border-slate-700 rounded-xl p-6 relative overflow-hidden mb-8 shadow-2xl">
+          <div className="absolute top-0 right-0 bg-[#00E5FF]/20 text-[#00E5FF] text-[10px] font-bold px-3 py-1 rounded-bl-lg font-mono">
+            UNLOCKED
+          </div>
+          <h3 className="text-md font-serif text-slate-200 mb-4 border-b border-slate-800 pb-2">您即将进入的核心能力矩阵：</h3>
+          <ul className="text-xs text-slate-400 space-y-3 font-mono">
+            <li className="flex items-center gap-3"><CheckCircle2 className="w-4 h-4 text-[#D4AF37]"/> 多模态合规条款逆向工程提取</li>
+            <li className="flex items-center gap-3"><CheckCircle2 className="w-4 h-4 text-[#D4AF37]"/> AST (抽象语法树) 级代码阻断沙箱</li>
+            <li className="flex items-center gap-3"><CheckCircle2 className="w-4 h-4 text-[#D4AF37]"/> 军工级不可篡改司法审计日志</li>
+          </ul>
+        </div>
+  
+        <button 
+          onClick={handleEnterCore}
+          disabled={isRedirecting}
+          className="w-full bg-[#D4AF37] hover:bg-[#b5952f] disabled:bg-slate-800 disabled:text-slate-500 text-black font-bold font-serif text-lg py-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+        >
+          {isRedirecting ? (
+            <span className="flex items-center gap-2"><Zap className="w-5 h-5 animate-pulse" /> 主引擎点火中...</span>
+          ) : (
+            <span className="flex items-center gap-2">进入全域核武大屏 <Zap className="w-5 h-5" /></span>
+          )}
+        </button>
+  
+        <div className="mt-8 text-center">
+          <p className="text-[10px] text-slate-500 font-mono">
+            * 建议在 PC 端打开该系统以获得最佳的实弹演算体验。<br/>您的密钥授权有效时长为 24 小时。
+          </p>
+        </div>
       </div>
+    );
+  };
 
-      <div className="bg-black border border-slate-700 rounded-xl p-5 opacity-80">
-        <h3 className="text-lg font-serif text-slate-300 mb-1">全域霸权包 (Enterprise)</h3>
-        <div className="text-2xl font-mono text-slate-300 mb-3">¥800,000+ <span className="text-xs text-slate-500">/年</span></div>
-        <ul className="text-xs text-slate-500 space-y-2">
-          <li className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3"/> 无限节点拦截 + 私有化节点部署</li>
-          <li className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3"/> 客户 CMK 自持级司法链防篡改</li>
-        </ul>
-      </div>
-    </div>
-
-    <div className="mt-12 text-center">
-      <p className="text-xs text-slate-500 font-mono">
-        One Tribunal 创始团队已收到您的 Alpha 序列响应。<br/>随时待命为您提供闭门路演。
-      </p>
-    </div>
-  </div>
-);
 
 // ==========================================
 // 🚀 主页面拼装
@@ -391,7 +421,7 @@ export default function VIPInvitationPage() {
         <HeroSection />
         <LiveForgeScanner />
         <ValueProps />
-        {!isUnlocked ? <InviteGate onUnlock={handleUnlock} /> : <PricingMenu />}
+        {!isUnlocked ? <InviteGate onUnlock={handleUnlock} /> : <UnlockedPortal activeCode={activeCode} />}
       </div>
     </div>
   );

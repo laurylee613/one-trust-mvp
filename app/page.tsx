@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { UploadCloud, Shield, FileText, ChevronDown, ChevronUp, Lock, AlertTriangle, Loader2, Scale, Terminal } from 'lucide-react';
 
 // ==========================================
@@ -211,6 +212,28 @@ const TigerTallyStatus = ({ status, ruleCount }: { status: string, ruleCount: nu
 };
 
 export default function OneTrustDashboard() {
+    // ==========================================
+    // 💎 幽灵门卫：铁幕行动防御系统
+    // ==========================================
+    const router = useRouter();
+    const [isAuthorized, setIsAuthorized] = useState(false);
+  
+    useEffect(() => {
+      // 检查浏览器底层有没有我们在 VIP 页面打的烙印
+      const vipPass = sessionStorage.getItem('tribunal_vip_pass');
+      if (!vipPass) {
+        // 没有任何烙印？直接黑屏并踹回门禁页！
+        router.replace('/vip'); 
+      } else {
+        // 有烙印，放行！
+        setIsAuthorized(true);
+      }
+    }, [router]);
+  
+
+    // ==========================================
+
+   
   const [status, setStatus] = useState('idle'); 
   const [terminalText, setTerminalText] = useState('');
   const [verdictRules, setVerdictRules] = useState<any[]>([]);
@@ -308,6 +331,17 @@ export default function OneTrustDashboard() {
       setStatus('error');
     }
   };
+
+  if (!isAuthorized) {
+    // 拦截渲染：在校验完成前，绝对不露出大屏的一丝一毫
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center">
+        <div className="text-red-500 font-mono text-sm tracking-widest animate-pulse border border-red-900 bg-red-950/30 px-6 py-3 rounded">
+          [ ACCESS DENIED ] 未经授权的物理访问。正在强制遣返...
+        </div>
+      </div>
+    );
+  }  
 
   return (
     <div className="min-h-screen bg-[#050B14] text-slate-300 font-sans p-6 selection:bg-amber-500/30">
