@@ -67,8 +67,7 @@ const LiveForgeScanner = () => {
         }, 4500);
       } else {
         // 🛡️ 路线 B：非法律文本，触发高冷拒收剧本
-        setTimeout(() => setScanState('parsing'), 1500);
-        setTimeout(() => {
+          setTimeout(() => {
           setScanState('rejected');
           // 轻微震动提示异常
           if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate([50]);
