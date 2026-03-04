@@ -7,7 +7,7 @@ import { UploadCloud, Shield, FileText, ChevronDown, ChevronUp, Lock, AlertTrian
 // ==========================================
 // 🚨 Dify API 与环境配置
 // ==========================================
-const DIFY_API_URL = "https://api.oneplatform.com.cn/v1"; 
+const DIFY_API_URL = "https://api.onetribunal.com/v1"; 
 
 const MOCK_THINKING = `[仲裁庭纪要] 契约已呈递...
 [天眼网络] 建立司法级加密通道...
