@@ -339,7 +339,7 @@ const UnlockedPortal = ({ activeCode }: { activeCode: string }) => {
       // 模拟 1.5 秒的系统启动加载感，然后将客户传送到 V2.1 真实大屏
       // 💎 核心安全补丁：在浏览器底层打上防伪烙印
       if (typeof window !== 'undefined') {
-      sessionStorage.setItem('tribunal_vip_pass', activeCode);
+      localStorage.setItem('tribunal_vip_pass', activeCode);
       if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
   }
 

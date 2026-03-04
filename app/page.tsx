@@ -220,7 +220,7 @@ export default function OneTrustDashboard() {
   
     useEffect(() => {
       // 检查浏览器底层有没有我们在 VIP 页面打的烙印
-      const vipPass = sessionStorage.getItem('tribunal_vip_pass');
+      const vipPass = localStorage.getItem('tribunal_vip_pass');
       if (!vipPass) {
         // 没有任何烙印？直接黑屏并踹回门禁页！
         router.replace('/vip'); 
