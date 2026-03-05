@@ -1,0 +1,34 @@
+// 💎 虎符引擎核心数据模型 v5.0 (云端终局版)
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ☁️ 核心改动：拔掉 SQLite 弹夹，换上 Neon/Vercel Postgres 重型装甲！
+datasource db {
+  provider  = "postgresql"
+  // 日常高并发查询，走连接池 (读取 .env 里的 POSTGRES_PRISMA_URL)
+  url       = env("POSTGRES_PRISMA_URL") 
+  // 结构变更和建表，走直连通道 (读取 .env 里的 POSTGRES_URL_NON_POOLING)
+  directUrl = env("POSTGRES_URL_NON_POOLING") 
+}
+
+// 拦截与越权事件表 (原封不动)
+model InterceptEvent {
+  id            String    @id @default(cuid())
+  repoName      String    // 仓库名 (如: OneTrust/Core-System)
+  prNumber      Int       // PR编号
+  author        String    // 提交人
+  branch        String    // 涉及分支
+  
+  // 核心状态机：BLOCKED(已拦截), OVERRIDDEN(CTO已破窗/缓期执行), APPROVED(律师已追认), ROLLBACK(已回滚)
+  status        String    @default("BLOCKED") 
+  
+  reason        String?   // 违规原因描述
+  violationHash String?   // AST 盲计算脱敏特征码
+  
+  // ⏱️ 24小时定时炸弹核心字段
+  overrideTime  DateTime? // 记录 CTO 按下破窗按钮的绝对时间戳
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
