@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic'; // 💎 Munger 注入：强制动态执行，拒绝静态打包！
+
 export async function POST() {
   try {
     // 1. 军火库检索：找到最新一条被死锁的 PR
