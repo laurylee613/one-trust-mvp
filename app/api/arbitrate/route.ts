@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export const dynamic = 'force-dynamic'; // 💎 Munger 注入：强制动态执行，拒绝静态打包！
+// 💎 Munger 终极注入：双重封条，彻底打断 Vercel 的静态打包企图！
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 export async function POST(request: Request) {
   try {
@@ -11,7 +13,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: '缺乏有效判决书' }, { status: 400 });
     }
 
-    // 核心动作：将状态修改为 APPROVED (追认合规) 或 ROLLBACK (勒令回滚)
     const updatedEvent = await prisma.interceptEvent.update({
       where: { id: eventId },
       data: { status: action },
